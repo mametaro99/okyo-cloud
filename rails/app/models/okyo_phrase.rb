@@ -1,0 +1,2 @@
+class OkyoPhrase < ApplicationRecord
+end
