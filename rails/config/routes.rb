@@ -6,7 +6,8 @@ Rails.application.routes.draw do
       mount_devise_token_auth_for 'User', at: 'auth'
       resources :okyo, only: [:index, :show]
       namespace :current do
-        resource :user, only: [:show]
+        resources :okyo, only: [:index, :show, :create, :update, :destroy]
+        resources :user, only: [:show]
       end
     end
   end

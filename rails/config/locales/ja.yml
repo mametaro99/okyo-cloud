@@ -1,6 +1,11 @@
 ja:
   activerecord:
-    attributes:
-      article:
-        title: タイトル
-        content: 本文
+    errors:
+      models:
+        okyo:
+          attributes:
+            name:
+              blank: "名前を入力してください"
+  errors:
+    messages:
+      blank: "を入力してください"
