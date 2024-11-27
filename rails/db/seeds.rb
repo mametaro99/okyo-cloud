@@ -1,8 +1,8 @@
 # 宗派データの作成
 sects = Sect.create!([
-  { sect_name: "浄土宗", description: "念仏を唱えることを中心とした宗派" },
-  { sect_name: "曹洞宗", description: "座禅を重んじる禅宗の一派" },
-  { sect_name: "天台宗", description: "法華経を中心とした教えを説く宗派" }
+  { name: "浄土宗", description: "念仏を唱えることを中心とした宗派" },
+  { name: "曹洞宗", description: "座禅を重んじる禅宗の一派" },
+  { name: "天台宗", description: "法華経を中心とした教えを説く宗派" }
 ])
 
 # ユーザーデータ（和尚さん）の作成
