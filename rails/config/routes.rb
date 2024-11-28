@@ -14,6 +14,7 @@ Rails.application.routes.draw do
             patch "sort_by", on: :member
           end
         end
+        resources :ceremony, only: [:index, :show, :create, :update, :destroy]
         resources :user, only: [:show]
       end
     end
