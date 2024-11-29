@@ -1,7 +1,7 @@
 class Api::V1::OkyoController < ApplicationController
   def index
     @okyos = Okyo.all
-    render json: @okyos
+    render json: @okyos, each_serializer: OkyoSerializer, status: :ok
   end
 
   def show
