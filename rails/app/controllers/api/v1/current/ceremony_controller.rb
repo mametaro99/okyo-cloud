@@ -1,6 +1,6 @@
 class Api::V1::Current::CeremonyController < Api::V1::BaseController
-  before_action :authenticate_user!, only: [:index, :create, :destroy]
-  before_action :set_ceremony, only: [:show, :destroy]
+  before_action :authenticate_user!, only: [:index, :create, :destroy, :update]
+  before_action :set_ceremony, only: [:show, :destroy, :update]
 
   # GET /api/v1/current/ceremonies
   def index
@@ -31,6 +31,22 @@ class Api::V1::Current::CeremonyController < Api::V1::BaseController
     Rails.logger.error("Ceremony creation failed: #{e.message}")
     render json: { error: e.message }, status: :unprocessable_entity
   end
+
+  def update
+    ActiveRecord::Base.transaction do
+      if @ceremony.update(ceremony_params.except(:ceremony_okyo_groups_attributes))
+        # CeremonyOkyoGroupsを更新
+        handle_ceremony_okyo_groups(@ceremony)
+        render json: @ceremony, status: :ok
+      else
+        render json: { errors: @ceremony.errors.full_messages }, status: :unprocessable_entity
+      end
+    end
+  rescue => e
+    Rails.logger.error("Ceremony update failed: #{e.message}")
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+
 
   # DELETE /api/v1/current/ceremonies/:id
   def destroy
