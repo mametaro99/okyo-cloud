@@ -1,8 +1,12 @@
 import { Box, Grid, Container, Link } from '@mui/material'
 import camelcaseKeys from 'camelcase-keys'
 import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import OkyoCard from '@/components/OkyoCard'
+import Error from '@/components/Error'
+import Loading from '@/components/Loading'
+import { styles } from '@/styles'
 import { fetcher } from '@/utils'
 
 type OkyoProps = {
@@ -15,17 +19,17 @@ type OkyoProps = {
 }
 
 const Index: NextPage = () => {
-  const url = 'http://localhost:3000/api/v1/okyo'
+  const url = process.env.NEXT_PUBLIC_API_BASE_URL + '/okyo'
 
   const { data, error } = useSWR(url, fetcher)
-  if (error) return <div>An error has occurred.</div>
-  if (!data) return <div>Loading...</div>
+  if (error) return <Error />
+  if (!data) return <Loading />
 
   const okyos = camelcaseKeys(data)
   console.log(okyos)
 
   return (
-    <Box sx={{ backgroundColor: '#e6f2ff', minHeight: '100vh' }}>
+    <Box css={styles.pageMinHeight} sx={{ backgroundColor: '#e6f2ff' }}>
       <Container maxWidth="md" sx={{ pt: 6 }}>
         <Grid container spacing={4}>
           {okyos.map((okyo: OkyoProps, i: number) => (
