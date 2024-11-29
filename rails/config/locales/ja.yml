@@ -6,6 +6,10 @@ ja:
           attributes:
             name:
               blank: "名前を入力してください"
+        ceremony_okyo_group:
+          attributes:
+            okyo:
+              required: "お経の指定は必須です"
   errors:
     messages:
       blank: "を入力してください"

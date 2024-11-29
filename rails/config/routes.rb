@@ -14,7 +14,9 @@ Rails.application.routes.draw do
             patch "sort_by", on: :member
           end
         end
-        resources :ceremony, only: [:index, :show, :create, :update, :destroy]
+        resources :ceremony, only: [:index, :show, :create, :update, :destroy] do
+          resources :ceremony_okyo_group, only: [:index, :show, :create, :update, :destroy]
+        end
         resources :user, only: [:show]
       end
     end
