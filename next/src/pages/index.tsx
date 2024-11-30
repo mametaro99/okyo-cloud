@@ -34,7 +34,7 @@ const Index: NextPage = () => {
         <Grid container spacing={4}>
           {okyos.map((okyo: OkyoProps, i: number) => (
             <Grid key={okyo.id} item xs={12} md={6}>
-              <Link href={'/articles/' + okyo.id}>
+              <Link href={'/okyos/' + okyo.id}>
                 <OkyoCard
                   name={okyo.name}
                   description={okyo.description}
