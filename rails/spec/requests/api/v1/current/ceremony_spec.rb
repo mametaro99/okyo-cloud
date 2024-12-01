@@ -88,7 +88,7 @@ RSpec.describe "Api::V1::Current::Ceremonies", type: :request do
 
   describe "DELETE /api/v1/current/ceremony/:id" do
     let(:ceremony) { create(:ceremony, user: user) }
-    # 一時的に保留
+    #
     # it "deletes the specified ceremony" do
     #   expect {
     #     delete api_v1_current_ceremony_path(ceremony), headers: auth_headers # Pass headers in the request

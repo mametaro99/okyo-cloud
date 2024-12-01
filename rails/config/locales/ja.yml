@@ -10,6 +10,12 @@ ja:
           attributes:
             okyo:
               required: "お経の指定は必須です"
+        user:
+          attributes:
+            password:
+              too_short: "パスワードは%{count}文字以上でなければなりません"
+      messages:
+        too_short: "%{attribute}は%{count}文字以上でなければなりません"
   errors:
     messages:
       blank: "を入力してください"
