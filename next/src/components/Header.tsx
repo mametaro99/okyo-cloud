@@ -126,12 +126,14 @@ const Header = () => {
                        </Typography>
                      </Box>
                      <Divider />
-                     <MenuItem>
-                       <ListItemIcon>
-                         <ArticleIcon fontSize="small" />
-                       </ListItemIcon>
-                       記事の管理
-                     </MenuItem>
+                     <Link href="/current/okyos">
+                      <MenuItem>
+                        <ListItemIcon>
+                          <ArticleIcon fontSize="small" />
+                        </ListItemIcon>
+                        お経の編集画面へ
+                      </MenuItem>
+                     </Link>
                      <Link href="/sign_out">
                        <MenuItem>
                          <ListItemIcon>
