@@ -4,7 +4,7 @@ class Api::V1::Current::OkyoController < Api::V1::BaseController
 
   def index
     @okyos = Okyo.all
-    render json: @okyos, status: :ok
+    render json: @okyos, each_serializer: OkyoSerializer, status: :ok
   end
 
   def create
@@ -17,7 +17,7 @@ class Api::V1::Current::OkyoController < Api::V1::BaseController
   end
 
   def show
-    render json: @okyo, status: :ok
+    render json: @okyo, serializer: OkyoSerializer ,status: :ok
   end
 
   def update
