@@ -1,94 +1,103 @@
-import { GetServerSideProps } from "next";
+import { Box, Button, Card, CardActions, CardContent, Grid, Typography } from "@mui/material";
 import Link from "next/link";
+import useSWR from "swr";
+import { useRouter } from "next/router";
+import Loading from "@/components/Loading";
+import Error from "@/components/Error";
+import { useRequireSignedIn } from "@/hooks/useRequireSignedIn";
+import { useUserState } from "@/hooks/useGlobalState";
+import { fetcher } from "@/utils";
+import { NextPage } from "next";
+import { useState, useEffect } from "react";
+import UserOkyoCard from "@/components/UserOkyoCard";
 
-interface Okyo {
-  id: number;
+// Define the types for data
+type Okyo = {
+  id: string;
   name: string;
   description: string;
-  video_url: string;
-  article_url: string;
-}
+  sects: { name: string }[];
+};
 
-interface Props {
+type OkyoListResponse = {
   okyos: Okyo[];
-  userSectId: number; // 仮に現在のユーザーの宗派IDが必要だと仮定
-}
+};
 
-const OkyoList = ({ okyos, userSectId }: Props) => {
+const CurrentOkyos: NextPage = () => {
+  const router = useRouter();
+  const [user] = useUserState();
+
+  // State to track whether the router is ready
+  const [isRouterReady, setIsRouterReady] = useState(false);
+
+  // Check if the router is ready
+  useEffect(() => {
+    if (router.isReady) {
+      setIsRouterReady(true);
+    }
+  }, [router.isReady]);
+
+  // Require user to be signed in
+  useRequireSignedIn();
+
+  // URLs for fetching data
+  const okyoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/current/okyo`;
+  const userUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/current/user`;
+
+  // Fetch data using SWR
+  const { data: okyoData, error: okyoError } = useSWR<OkyoListResponse>(isRouterReady ? okyoUrl : null, fetcher);
+  const { data: currentUser, error: userError } = useSWR(isRouterReady ? userUrl : null, fetcher);
+
+  // Handle loading and error states
+  if (!user?.isSignedIn) return <Error />;
+  if (okyoError || userError) return <Error />;
+  if (!okyoData || !currentUser) return <Loading />;
+
+  const userSectName = currentUser.sect?.name;
+  const okyos = okyoData || [];
+
   return (
-    <div className="p-6">
-      <p>所属している宗派のみ、編集可能です。</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {okyos.map((okyo) => (
-          <div
-            key={okyo.id}
-            className="border rounded-lg shadow-md p-4 flex flex-col justify-between bg-white"
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh', padding: 2 }}>
+      <Box sx={{ width: '100%', maxWidth: 1200 }}>
+        <Typography variant="h6" gutterBottom textAlign="center">
+          所属している宗派のみ、編集可能です。
+        </Typography>
+        <Grid container spacing={3}>
+          {okyos.map((okyo) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={okyo.id}>
+              <UserOkyoCard
+                id={okyo.id}
+                name={okyo.name}
+                description={okyo.description}
+                sects={okyo.sects}
+                userSectName={userSectName}
+              />
+            </Grid>
+          ))}
+        </Grid>
+
+        {/* Create New Okyo Link */}
+        <Box sx={{ marginTop: 4, textAlign: "center" }}>
+          <Button
+            component={Link}
+            href="/user/okyos/new"
+            variant="contained"
+            color="primary"
+            sx={{
+              color: 'white',
+              textTransform: 'none',
+              fontSize: 16,
+              borderRadius: 2,
+              width: 180,
+              boxShadow: 'none',
+            }}
           >
-            <h2 className="text-xl font-bold mb-4">{okyo.name}</h2>
-            <p className="text-gray-600 mb-4">
-              {okyo.description.length > 100
-                ? `${okyo.description.substring(0, 100)}...`
-                : okyo.description}
-            </p>
-            <div className="flex justify-between">
-              {/* 詳細ページリンク */}
-              <Link
-                href={`/okyos/${okyo.id}`}
-                className="bg-blue-500 text-white py-1 px-4 rounded hover:bg-blue-600"
-              >
-                詳細
-              </Link>
-              {/* 編集ページリンク */}
-              {userSectId === 1 && ( // 仮に宗派IDが一致しているかどうかをチェック
-                <Link
-                  href={`/okyos/${okyo.id}/edit`}
-                  className="bg-green-500 text-white py-1 px-4 rounded hover:bg-green-600"
-                >
-                  編集
-                </Link>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-      <br />
-      {/* 新しいお経を作成リンク */}
-      <Link
-        href="/okyos/new"
-        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-      >
-        新しいお経を作成
-      </Link>
-    </div>
+            新しいお経を作成
+          </Button>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  try {
-    const response = await fetch("http://localhost:3000/api/v1/current/okyo");
-
-    // レスポンスが成功した場合のみ、JSONとして解析
-    if (!response.ok) {
-      console.error("Failed to fetch okyos:", response.statusText);
-      return { props: { okyos: [], userSectId: 1 } };
-    }
-
-    // レスポンスをJSONとして解析
-    const okyos: Okyo[] = await response.json();
-
-    // 仮にユーザーの宗派情報を取得（例: ユーザーのIDを利用して取得）
-    const userSectId = 1; // 宗派IDは動的に取得することを想定
-
-    return {
-      props: {
-        okyos,
-        userSectId,
-      },
-    };
-  } catch (error) {
-    console.error("Error fetching okyos:", error);
-    return { props: { okyos: [], userSectId: 1 } };
-  }
-};
-
-export default OkyoList;
+export default CurrentOkyos;
