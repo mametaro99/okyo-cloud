@@ -21,7 +21,7 @@ class Api::V1::Current::OkyoController < Api::V1::BaseController
   end
 
   def update
-    if @okyo.update(okyo_params)
+    if @okyo.update(okyo_params.except(:sect_ids))
       render json: @okyo, status: :ok
     else
       render json: { errors: @okyo.errors.full_messages }, status: :unprocessable_entity
