@@ -28,7 +28,7 @@ const UserOkyoCard: React.FC<UserOkyoCardProps> = ({ id, name, description, sect
         {/* Details Link */}
         <Button
           component={Link}
-          href={`/current/okyos/${id}`}
+          href={`/okyos/${id}`}
           variant="contained"
           color="secondary"
           sx={{
