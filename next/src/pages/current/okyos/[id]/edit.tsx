@@ -30,7 +30,6 @@ type OkyoProps = {
   videoUrl: string;
   articleUrl: string;
   published: boolean;
-  sects: { id: number; name: string }[];
 };
 
 const OkyoForm: NextPage = () => {
@@ -54,7 +53,7 @@ const OkyoForm: NextPage = () => {
     if (okyoError) return;
     if (!okyoData) return;
 
-    const loadedOkyo: OkyoProps = camelcaseKeys(okyoData);
+    const loadedOkyo: OkyoProps = camelcaseKeys(okyoData.okyo);
     setOkyo(loadedOkyo);
   }, [router.isReady, user.isSignedIn, okyoError, okyoData]);
 
@@ -68,6 +67,7 @@ const OkyoForm: NextPage = () => {
 
   if (okyoError) return <Error />;
   if (!okyoData) return <Loading />;
+
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -87,7 +87,6 @@ const OkyoForm: NextPage = () => {
         article_url: okyo.articleUrl,
         video_url: okyo.videoUrl,
         published: okyo.published,
-        sect_ids: okyo.sects?.map((sect) => sect.id) || [],
       },
     };
 
@@ -135,28 +134,28 @@ const OkyoForm: NextPage = () => {
       <form onSubmit={handleSubmit}>
         <TextField
           label="名前"
-          value={okyoData.okyo.name || ''}
+          value={okyo.name || ''}
           onChange={(e) => setOkyo({ ...okyo, name: e.target.value })}
           fullWidth
           sx={{ mb: 2 }}
         />
         <TextField
           label="説明"
-          value={okyoData.okyo.description || ''}
+          value={okyo.description || ''}
           onChange={(e) => setOkyo({ ...okyo, description: e.target.value })}
           fullWidth
           sx={{ mb: 2 }}
         />
         <TextField
           label="記事のURL"
-          value={okyoData.okyo.article_url || ''}
+          value={okyo.articleUrl || ''}
           onChange={(e) => setOkyo({ ...okyo, articleUrl: e.target.value })}
           fullWidth
           sx={{ mb: 2 }}
         />
         <TextField
           label="ビデオのURL"
-          value={okyoData.okyo.video_url || ''}
+          value={okyo.videoUrl || ''}
           onChange={(e) => setOkyo({ ...okyo, videoUrl: e.target.value })}
           fullWidth
           sx={{ mb: 2 }}
@@ -166,7 +165,7 @@ const OkyoForm: NextPage = () => {
           <RadioGroup
             aria-label="published"
             name="published"
-            value={okyoData.okyo.published ? 'true' : 'false'}
+            value={okyo.published ? 'true' : 'false'}
             onChange={(e) => {
               const value = e.target.value === 'true';
               setOkyo({ ...okyo, published: value });
