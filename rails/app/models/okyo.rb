@@ -1,4 +1,5 @@
 class Okyo < ApplicationRecord
+  has_one_attached :media
   has_many :ceremony_okyo_groups
   has_many :okyo_sect_groups, dependent: :destroy
   has_many :sects, through: :okyo_sect_groups
