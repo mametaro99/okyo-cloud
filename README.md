@@ -26,3 +26,4 @@
 フロントエンド（Next.js）から直接アップロードするべきか、バックエンド(Rails)を経由してアップロードするべきかを検討する際に以下を参考にしました。
 
 - [RailsをバックエンドとしたSPAでのファイルアップロード機能の作り方に悩んだ話](https://zenn.dev/y_uuu/articles/baaee6d181fda7)
+- [Active Storage の概要_Railsガイド](https://railsguides.jp/active_storage_overview.html)
