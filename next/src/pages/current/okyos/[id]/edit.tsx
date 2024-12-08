@@ -52,7 +52,7 @@ const OkyoForm: NextPage = () => {
     if (okyoError) return;
     if (!okyoData) return;
 
-    const loadedOkyo: OkyoProps = camelcaseKeys(okyoData.okyo);
+    const loadedOkyo: OkyoProps = camelcaseKeys(okyoData);
     setOkyo(loadedOkyo);
   }, [router.isReady, user.isSignedIn, okyoError, okyoData]);
 

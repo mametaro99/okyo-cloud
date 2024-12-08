@@ -34,7 +34,7 @@ type OkyoProps = {
   id: number
   name: string
   description: string
-  videoUrl: string
+  video: string
   articleUrl: string
   published: boolean
   createdAt: string
@@ -50,9 +50,9 @@ const OkyoDetail: NextPage = () => {
   if (error) return <Error />
   if (!data) return <Loading />
 
-  const okyo: OkyoProps = camelcaseKeys(data.okyo)
+  const okyo: OkyoProps = camelcaseKeys(data)
   const phrases: OkyoPhraseProps[] = camelcaseKeys(data.okyo_phrases)
-
+  console.log(data)
   // VideoAndSubtitle に渡す字幕データ
   const subtitleData = phrases.map((phrase) => ({
     start: phrase.videoStartTime,
@@ -126,7 +126,7 @@ const OkyoDetail: NextPage = () => {
               >
                 動画と字幕
               </Typography>
-              <VideoAndSubtitle video_url={okyo.videoUrl} phrases={subtitleData} />
+              <VideoAndSubtitle video_url={okyo.video} phrases={subtitleData} />
             </Box>
 
             <Typography
