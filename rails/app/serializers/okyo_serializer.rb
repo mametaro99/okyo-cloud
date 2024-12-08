@@ -1,7 +1,9 @@
 class OkyoSerializer < ActiveModel::Serializer
   attributes :id, :name, :description, :article_url, :sects, :video, :created_at, :updated_at
   has_many :sects, serializer: SectSerializer
-  has_many :okyo_phrases, serializer: OkyoPhraseSerializer
+  has_many :okyo_phrases, serializer: OkyoPhraseSerializer do
+    object.okyo_phrases.order(:order)
+  end
   
   # ActiveStorageでS3にアップロードされた動画の署名付きURLを返すメソッド
   def video
