@@ -80,7 +80,7 @@ const CurrentOkyos: NextPage = () => {
         <Box sx={{ marginTop: 4, textAlign: "center" }}>
           <Button
             component={Link}
-            href="/user/okyos/new"
+            href="/current/okyos/new"
             variant="contained"
             color="primary"
             sx={{
