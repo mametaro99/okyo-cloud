@@ -45,6 +45,6 @@ class Api::V1::Current::OkyoController < Api::V1::BaseController
   end
 
   def okyo_params
-    params.require(:okyo).permit(:name, :description, :article_url, :published, :video_url)
+    params.require(:okyo).permit(:name, :description, :article_url, :published, :video)
   end
 end
