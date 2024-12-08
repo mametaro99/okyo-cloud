@@ -3,11 +3,14 @@ import {
   Box,
   FormControl,
   FormControlLabel,
-  FormHelperText,
   Radio,
   RadioGroup,
   TextField,
   Typography,
+  Button,
+  Card,
+  CardContent,
+  IconButton,
 } from '@mui/material';
 import axios, { AxiosError } from 'axios';
 import camelcaseKeys from 'camelcase-keys';
@@ -29,6 +32,17 @@ type OkyoProps = {
   videoUrl: string;
   articleUrl: string;
   published: boolean;
+  okyoPhrases: OkyoPhraseProps[];
+};
+
+type OkyoPhraseProps = {
+  id: number;
+  phraseText: string;
+  meaning: string;
+  reading: string;
+  videoStartTime: number;
+  videoEndTime: number;
+  order: string;
 };
 
 const OkyoForm: NextPage = () => {
@@ -40,10 +54,18 @@ const OkyoForm: NextPage = () => {
   const [okyo, setOkyo] = useState<Partial<OkyoProps>>({});
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [editingPhraseId, setEditingPhraseId] = useState<number | null>(null);
+  const [editingPhraseText, setEditingPhraseText] = useState<string>('');
+  const [phrases, setPhrases] = useState<OkyoPhraseProps[]>([]);
+  const [editingPhraseMeaning, setEditingPhraseMeaning] = useState<string>('');
+  const [editingPhraseStartTime, setEditingPhraseStartTime] = useState<number>(0);
+  const [editingPhraseEndTime, setEditingPhraseEndTime] = useState<number>(0);
+  const [editingPhraseReading, setEditingPhraseReading] = useState<string>('');
 
   const { id } = router.query;
   const okyoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/okyo/${id}`;
   const updateOkyoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/current/okyo/${id}`;
+  const phrasesUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/current/okyo/${id}/okyo_phrases`;
   const { data: okyoData, error: okyoError } = useSWR(okyoUrl, fetcher);
 
   React.useEffect(() => {
@@ -54,11 +76,9 @@ const OkyoForm: NextPage = () => {
 
     const loadedOkyo: OkyoProps = camelcaseKeys(okyoData);
     setOkyo(loadedOkyo);
+    setPhrases(loadedOkyo.okyoPhrases);
   }, [router.isReady, user.isSignedIn, okyoError, okyoData]);
 
-  if (!router.isReady) {
-    return <Loading />;
-  }
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = event.target.files?.[0] || null;
     setFile(uploadedFile);
@@ -105,8 +125,6 @@ const OkyoForm: NextPage = () => {
         err instanceof AxiosError && err.response
           ? err.response.data.message || '不明なエラーが発生しました'
           : 'ネットワークエラーが発生しました';
-  
-      console.error('Submission error:', err);
       setSnackbar({
         message: `編集に失敗しました: ${errorMessage}`,
         severity: 'error',
@@ -116,6 +134,80 @@ const OkyoForm: NextPage = () => {
       setIsLoading(false);
     }
   };
+
+  const handleEditPhrase = (
+    phraseId: number,
+    phraseText: string,
+    meaning: string,
+    reading: string,
+    startTime: number,
+    endTime: number
+  ) => {
+    setEditingPhraseId(phraseId);
+    setEditingPhraseText(phraseText);
+    setEditingPhraseMeaning(meaning);
+    setEditingPhraseReading(reading);
+    setEditingPhraseStartTime(startTime);
+    setEditingPhraseEndTime(endTime);
+  };
+
+  const handleSavePhrase = async (phraseId: number) => {
+    const headers = {
+      'access-token': localStorage.getItem('access-token'),
+      client: localStorage.getItem('client'),
+      uid: localStorage.getItem('uid'),
+    };
+
+    try {
+      await axios.patch(`${phrasesUrl}/${phraseId}`, {
+        phrase_text: editingPhraseText,
+        meaning: editingPhraseMeaning,
+        reading: editingPhraseReading,
+        video_start_time: editingPhraseStartTime,
+        video_end_time: editingPhraseEndTime,
+      }, { headers });
+      setSnackbar({
+        message: 'フレーズを保存しました',
+        severity: 'success',
+        pathname: router.pathname,
+      });
+
+      setEditingPhraseId(null);
+      setEditingPhraseText('');
+      setEditingPhraseMeaning('');
+      setEditingPhraseReading('');
+      setEditingPhraseStartTime(0);
+      setEditingPhraseEndTime(0);
+    } catch (err) {
+      const errorMessage =
+        err instanceof AxiosError && err.response
+          ? err.response.data.message || '不明なエラーが発生しました'
+          : 'ネットワークエラーが発生しました';
+
+      setSnackbar({
+        message: `フレーズの保存に失敗しました: ${errorMessage}`,
+        severity: 'error',
+        pathname: router.pathname,
+      });
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingPhraseId(null);
+    setEditingPhraseText('');
+    setEditingPhraseMeaning('');
+    setEditingPhraseReading('');
+    setEditingPhraseStartTime(0);
+    setEditingPhraseEndTime(0);
+  };
+
+  const handleDragEnd = (event: React.DragEvent, index: number) => {
+    // ドラッグ＆ドロップで並べ替え処理を実装
+  };
+
+  if (!router.isReady) {
+    return <Loading />;
+  }
 
   return (
     <Box css={styles.pageMinHeight}>
@@ -190,6 +282,87 @@ const OkyoForm: NextPage = () => {
           </LoadingButton>
         </Box>
       </form>
+
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h5">お経フレーズ</Typography>
+        {phrases.map((phrase, index) => (
+          <Card key={phrase.id} sx={{ mb: 2 }} draggable onDragEnd={(e) => handleDragEnd(e, index)}>
+            <CardContent>
+              {editingPhraseId === phrase.id ? (
+                <Box>
+                  <TextField
+                    fullWidth
+                    label="フレーズ"
+                    value={editingPhraseText}
+                    onChange={(e) => setEditingPhraseText(e.target.value)}
+                    autoFocus
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="意味"
+                    value={editingPhraseMeaning}
+                    onChange={(e) => setEditingPhraseMeaning(e.target.value)}
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="読み方"
+                    value={editingPhraseReading}
+                    onChange={(e) => setEditingPhraseReading(e.target.value)}
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="開始時間"
+                    type="number"
+                    value={editingPhraseStartTime}
+                    onChange={(e) => setEditingPhraseStartTime(Number(e.target.value))}
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="終了時間"
+                    type="number"
+                    value={editingPhraseEndTime}
+                    onChange={(e) => setEditingPhraseEndTime(Number(e.target.value))}
+                    sx={{ mb: 2 }}
+                  />
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Button onClick={() => handleCancelEdit()}>キャンセル</Button>
+                    <Button onClick={() => handleSavePhrase(phrase.id)} color="primary">
+                      保存
+                    </Button>
+                  </Box>
+                </Box>
+              ) : (
+                <Box>
+                  <Typography variant="h6">{phrase.phraseText}</Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {phrase.meaning}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    読み方: {phrase.reading}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                  開始時間: {phrase.videoStartTime}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    終了時間: {phrase.videoEndTime}
+                  </Typography>
+                  <IconButton
+                    edge="end"
+                    onClick={() => handleEditPhrase(phrase.id, phrase.phraseText, phrase.meaning, phrase.reading, phrase.videoStartTime, phrase.videoEndTime)}
+                    sx={{ ml: 1 }}
+                  >
+                    編集
+                  </IconButton>
+                </Box>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
     </Box>
   );
 };
