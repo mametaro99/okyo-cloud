@@ -21,7 +21,6 @@ import { useSnackbarState, useUserState } from '@/hooks/useGlobalState';
 import { useRequireSignedIn } from '@/hooks/useRequireSignedIn';
 import { styles } from '@/styles';
 import { fetcher } from '@/utils';
-import { ConnectingAirportsOutlined } from '@mui/icons-material';
 
 type OkyoProps = {
   id: number;
@@ -38,13 +37,13 @@ const OkyoForm: NextPage = () => {
   const [user] = useUserState();
   const [, setSnackbar] = useSnackbarState();
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [okyo, setOkyo] = useState<Partial<OkyoProps>>({});
+  const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const { id } = router.query;
   const okyoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/okyo/${id}`;
   const updateOkyoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/current/okyo/${id}`;
-
   const { data: okyoData, error: okyoError } = useSWR(okyoUrl, fetcher);
 
   React.useEffect(() => {
@@ -60,51 +59,56 @@ const OkyoForm: NextPage = () => {
   if (!router.isReady) {
     return <Loading />;
   }
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadedFile = event.target.files?.[0] || null;
+    setFile(uploadedFile);
 
-  if (!user.isSignedIn) {
-    return <Error />;
-  }
-
-  if (okyoError) return <Error />;
-  if (!okyoData) return <Loading />;
-
+    if (uploadedFile) {
+      const filePreview = URL.createObjectURL(uploadedFile);
+      setPreviewUrl(filePreview);
+    } else {
+      setPreviewUrl(null);
+    }
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
 
     const headers = {
-      'Content-Type': 'application/json',
       'access-token': localStorage.getItem('access-token'),
       client: localStorage.getItem('client'),
       uid: localStorage.getItem('uid'),
     };
 
-    const payload = {
-      okyo: {
-        name: okyo.name,
-        description: okyo.description,
-        article_url: okyo.articleUrl,
-        video_url: okyo.videoUrl,
-        published: okyo.published,
-      },
-    };
+    const formData = new FormData();
+    formData.append('okyo[name]', okyo.name || '');
+    formData.append('okyo[description]', okyo.description || '');
+    formData.append('okyo[article_url]', okyo.articleUrl || '');
+    formData.append('okyo[published]', String(okyo.published || false));
+
+    if (file) {
+      formData.append('okyo[video]', file);
+    }
 
     try {
-      await axios.put(updateOkyoUrl, payload, { headers });
-
+      await axios.put(updateOkyoUrl, formData, { headers });
       setSnackbar({
         message: '編集を保存しました',
         severity: 'success',
         pathname: router.pathname,
       });
 
-      router.push(`/okyo/${id}`);
+      router.push(`/okyos/${id}`);
     } catch (err) {
-      const error = err as AxiosError;
-      console.error('Submission error:', error.message);
+      const errorMessage =
+        err instanceof AxiosError && err.response
+          ? err.response.data.message || '不明なエラーが発生しました'
+          : 'ネットワークエラーが発生しました';
+  
+      console.error('Submission error:', err);
       setSnackbar({
-        message: '編集に失敗しました',
+        message: `編集に失敗しました: ${errorMessage}`,
         severity: 'error',
         pathname: router.pathname,
       });
@@ -114,23 +118,10 @@ const OkyoForm: NextPage = () => {
   };
 
   return (
-    <Box
-      css={styles.pageMinHeight}
-      sx={{
-        borderTop: '0.5px solid #acbcc7',
-        pb: 8,
-        px: 2,
-        pt: 5,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-      }}
-    >
+    <Box css={styles.pageMinHeight}>
       <Typography variant="h4" sx={{ mb: 4 }}>
         お経の編集
       </Typography>
-
       <form onSubmit={handleSubmit}>
         <TextField
           label="名前"
@@ -153,23 +144,27 @@ const OkyoForm: NextPage = () => {
           fullWidth
           sx={{ mb: 2 }}
         />
-        <TextField
-          label="ビデオのURL"
-          value={okyo.videoUrl || ''}
-          onChange={(e) => setOkyo({ ...okyo, videoUrl: e.target.value })}
-          fullWidth
-          sx={{ mb: 2 }}
-        />
+
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="subtitle1">動画または音声ファイル</Typography>
+          <input type="file" accept="video/mp4,audio/mp3" onChange={handleFileChange} />
+          {previewUrl && (
+            <Box sx={{ mt: 2 }}>
+              {file?.type.startsWith('video') ? (
+                <video src={previewUrl} controls width="100%" />
+              ) : (
+                <audio src={previewUrl} controls />
+              )}
+            </Box>
+          )}
+        </Box>
 
         <FormControl component="fieldset" sx={{ mb: 2 }}>
           <RadioGroup
             aria-label="published"
             name="published"
             value={okyo.published ? 'true' : 'false'}
-            onChange={(e) => {
-              const value = e.target.value === 'true';
-              setOkyo({ ...okyo, published: value });
-            }}
+            onChange={(e) => setOkyo({ ...okyo, published: e.target.value === 'true' })}
           >
             <FormControlLabel value="true" control={<Radio />} label="公開" />
             <FormControlLabel value="false" control={<Radio />} label="非公開" />
