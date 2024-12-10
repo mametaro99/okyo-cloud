@@ -185,7 +185,7 @@ const OkyoDetail: NextPage = () => {
                       <Box sx={{ pr: 1 }}>
                         <PersonIcon />
                       </Box>
-                      <ListItemText primary="名前" />
+                      <ListItemText primary="名称" />
                     </Box>
                     <Box>
                       <ListItemText primary={okyo.name} />
