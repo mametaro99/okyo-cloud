@@ -97,22 +97,6 @@ const Header = () => {
                        <PersonIcon />
                      </Avatar>
                    </IconButton>
-                   <Box sx={{ ml: 2 }}>
-                     <Button
-                       color="primary"
-                       variant="contained"
-                       sx={{
-                         color: 'white',
-                         textTransform: 'none',
-                         fontSize: 16,
-                         borderRadius: 2,
-                         width: 100,
-                         boxShadow: 'none',
-                       }}
-                     >
-                       Add new
-                     </Button>
-                   </Box>
                    <Menu
                      anchorEl={anchorEl}
                      id="account-menu"
