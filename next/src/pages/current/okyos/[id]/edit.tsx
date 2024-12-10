@@ -326,7 +326,7 @@ const OkyoForm: NextPage = () => {
   }
 
   return (
-    <Box css={styles.pageMinHeight}>
+    <Box css={styles.pageMinHeight} sx={{ maxWidth: '800px', mx: 'auto', p: 2 }}>
       <Typography variant="h4" sx={{ mb: 4 }}>
         お経の編集
       </Typography>
