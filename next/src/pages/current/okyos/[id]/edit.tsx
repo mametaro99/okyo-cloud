@@ -277,8 +277,48 @@ const OkyoForm: NextPage = () => {
     }
   };
 
-  const handleDragEnd = (event: React.DragEvent, index: number) => {
+  const handleDragEnd = async (event: React.DragEvent, index: number) => {
     // ドラッグ＆ドロップで並べ替え処理を実装
+    const beforeOrder = phrases[index].order;
+    const nextIndex = index + (event.clientY > event.currentTarget.getBoundingClientRect().top ? 1 : -1);
+    if (nextIndex < 0 || nextIndex >= phrases.length) return;
+    const afterOrder = phrases[nextIndex].order;
+
+    if (beforeOrder === afterOrder) return;
+
+    const headers = {
+      'access-token': localStorage.getItem('access-token'),
+      client: localStorage.getItem('client'),
+      uid: localStorage.getItem('uid'),
+    };
+
+    try {
+      await axios.patch(`${phraseUrl}/${index}/sort_by`, {
+        before_order: beforeOrder,
+        after_order: afterOrder,
+      }, { headers });
+
+      setSnackbar({
+        message: 'フレーズの順序を更新しました',
+        severity: 'success',
+        pathname: router.pathname,
+      });
+
+      mutate();
+    } catch (err) {
+      const errorMessage =
+        err instanceof AxiosError && err.response
+          ? err.response.data.message || '不明なエラーが発生しました'
+          : 'ネットワークエラーが発生しました';
+
+      setSnackbar({
+        message: `フレーズの順序更新に失敗しました: ${errorMessage}`,
+        severity: 'error',
+        pathname: router.pathname,
+      });
+    }
+
+
   };
 
   if (!router.isReady) {
