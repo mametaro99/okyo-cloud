@@ -61,12 +61,12 @@ const OkyoForm: NextPage = () => {
   const [editingPhraseStartTime, setEditingPhraseStartTime] = useState<number>(0);
   const [editingPhraseEndTime, setEditingPhraseEndTime] = useState<number>(0);
   const [editingPhraseReading, setEditingPhraseReading] = useState<string>('');
-  const [phraseUpdated, setPhraseUpdated] = useState(false);
+  const [phraseSaved, setPhraseSaved] = useState(false);
 
   const { id } = router.query;
   const okyoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/okyo/${id}`;
   const updateOkyoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/current/okyo/${id}`;
-  const updatePhraseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/current/okyo/${id}/okyo_phrase`;
+  const phraseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/current/okyo/${id}/okyo_phrase`;
   const { data: okyoData, error: okyoError, mutate } = useSWR(okyoUrl, fetcher);
 
   useEffect(() => {
@@ -83,11 +83,11 @@ const OkyoForm: NextPage = () => {
   }, [router.isReady, user.isSignedIn, okyoError, okyoData]);
 
   useEffect(() => {
-    if (phraseUpdated) {
+    if (phraseSaved) {
       mutate();
-      setPhraseUpdated(false);
+      setPhraseSaved(false);
     }
-  }, [phraseUpdated, mutate]);
+  }, [phraseSaved, mutate]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = event.target.files?.[0] || null;
@@ -169,7 +169,7 @@ const OkyoForm: NextPage = () => {
     };
 
     try {
-      await axios.patch(`${updatePhraseUrl}/${phraseId}`, {
+      await axios.patch(`${phraseUrl}/${phraseId}`, {
         okyo_phrase: {
           phrase_text: editingPhraseText,
           meaning: editingPhraseMeaning,
@@ -190,7 +190,7 @@ const OkyoForm: NextPage = () => {
       setEditingPhraseReading('');
       setEditingPhraseStartTime(0);
       setEditingPhraseEndTime(0);
-      setPhraseUpdated(true);
+      setPhraseSaved(true);
     } catch (err) {
       const errorMessage =
         err instanceof AxiosError && err.response
@@ -212,6 +212,69 @@ const OkyoForm: NextPage = () => {
     setEditingPhraseReading('');
     setEditingPhraseStartTime(0);
     setEditingPhraseEndTime(0);
+  };
+
+  const handleNewPhrase = (
+    phraseText: string,
+    meaning: string,
+    reading: string,
+    startTime: number,
+    endTime: number
+  ) => {
+    setEditingPhraseText(phraseText);
+    setEditingPhraseMeaning(meaning);
+    setEditingPhraseReading(reading);
+    setEditingPhraseStartTime(startTime);
+    setEditingPhraseEndTime(endTime);
+  };
+
+  const handleCreatePhrase = async () => {
+    const headers = {
+      'access-token': localStorage.getItem('access-token'),
+      client: localStorage.getItem('client'),
+      uid: localStorage.getItem('uid'),
+    };
+
+    // お経フレーズの中で最大のorderを取得（Rails側でorderの昇順にphraseを並べているため、phraseの最後の要素のorderを取得する。何もない場合は、1を指定する。）
+    const maxOrder: number = phrases.length > 0 ? parseInt(phrases[phrases.length - 1].order, 10) : 1;
+    
+
+    try {
+      await axios.post(`${phraseUrl}`, {
+        okyo_phrase: {
+          phrase_text: editingPhraseText,
+          meaning: editingPhraseMeaning,
+          reading: editingPhraseReading,
+          video_start_time: editingPhraseStartTime,
+          video_end_time: editingPhraseEndTime,
+          order: maxOrder + 1,
+        },
+      }, { headers });
+      setSnackbar({
+        message: 'フレーズを新規作成しました',
+        severity: 'success',
+        pathname: router.pathname,
+      });
+
+      setEditingPhraseId(null);
+      setEditingPhraseText('');
+      setEditingPhraseMeaning('');
+      setEditingPhraseReading('');
+      setEditingPhraseStartTime(0);
+      setEditingPhraseEndTime(0);
+      setPhraseSaved(true);
+    } catch (err) {
+      const errorMessage =
+        err instanceof AxiosError && err.response
+          ? err.response.data.message || '不明なエラーが発生しました'
+          : 'ネットワークエラーが発生しました';
+
+      setSnackbar({
+        message: `フレーズの作成に失敗しました: ${errorMessage}`,
+        severity: 'error',
+        pathname: router.pathname,
+      });
+    }
   };
 
   const handleDragEnd = (event: React.DragEvent, index: number) => {
@@ -375,6 +438,54 @@ const OkyoForm: NextPage = () => {
             </CardContent>
           </Card>
         ))}
+        {/* 新しいフレーズを追加 */}
+        <Card sx={{ mb: 2 }}>
+          <CardContent>
+            <Typography variant="h6">新しいフレーズを追加</Typography>
+            <TextField
+              fullWidth
+              label="フレーズ"
+              value={editingPhraseText}
+              onChange={(e) => setEditingPhraseText(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="意味"
+              value={editingPhraseMeaning}
+              onChange={(e) => setEditingPhraseMeaning(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="読み方"
+              value={editingPhraseReading}
+              onChange={(e) => setEditingPhraseReading(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="開始時間"
+              type="number"
+              value={editingPhraseStartTime}
+              onChange={(e) => setEditingPhraseStartTime(Number(e.target.value))}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="終了時間"
+              type="number"
+              value={editingPhraseEndTime}
+              onChange={(e) => setEditingPhraseEndTime(Number(e.target.value))}
+              sx={{ mb: 2 }}
+            />
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Button onClick={() => handleCreatePhrase()} color="primary">
+                保存
+              </Button>
+            </Box>
+          </CardContent>
+        </Card>
       </Box>
     </Box>
   );
