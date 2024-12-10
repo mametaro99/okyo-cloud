@@ -16,7 +16,7 @@ import axios, { AxiosError } from 'axios';
 import camelcaseKeys from 'camelcase-keys';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import Error from '@/components/Error';
 import Loading from '@/components/Loading';
@@ -61,23 +61,33 @@ const OkyoForm: NextPage = () => {
   const [editingPhraseStartTime, setEditingPhraseStartTime] = useState<number>(0);
   const [editingPhraseEndTime, setEditingPhraseEndTime] = useState<number>(0);
   const [editingPhraseReading, setEditingPhraseReading] = useState<string>('');
+  const [phraseUpdated, setPhraseUpdated] = useState(false);
 
   const { id } = router.query;
   const okyoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/okyo/${id}`;
   const updateOkyoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/current/okyo/${id}`;
-  const phrasesUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/current/okyo/${id}/okyo_phrases`;
-  const { data: okyoData, error: okyoError } = useSWR(okyoUrl, fetcher);
+  const updatePhraseUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/current/okyo/${id}/okyo_phrase`;
+  const { data: okyoData, error: okyoError, mutate } = useSWR(okyoUrl, fetcher);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!router.isReady) return;
     if (!user.isSignedIn) return;
     if (okyoError) return;
     if (!okyoData) return;
 
     const loadedOkyo: OkyoProps = camelcaseKeys(okyoData);
+    const okyoPhrases: OkyoPhraseProps[] = loadedOkyo.okyoPhrases.map((phrase: OkyoPhraseProps) => camelcaseKeys(phrase));
+
     setOkyo(loadedOkyo);
-    setPhrases(loadedOkyo.okyoPhrases);
+    setPhrases(okyoPhrases);
   }, [router.isReady, user.isSignedIn, okyoError, okyoData]);
+
+  useEffect(() => {
+    if (phraseUpdated) {
+      mutate();
+      setPhraseUpdated(false);
+    }
+  }, [phraseUpdated, mutate]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = event.target.files?.[0] || null;
@@ -159,12 +169,14 @@ const OkyoForm: NextPage = () => {
     };
 
     try {
-      await axios.patch(`${phrasesUrl}/${phraseId}`, {
-        phrase_text: editingPhraseText,
-        meaning: editingPhraseMeaning,
-        reading: editingPhraseReading,
-        video_start_time: editingPhraseStartTime,
-        video_end_time: editingPhraseEndTime,
+      await axios.patch(`${updatePhraseUrl}/${phraseId}`, {
+        okyo_phrase: {
+          phrase_text: editingPhraseText,
+          meaning: editingPhraseMeaning,
+          reading: editingPhraseReading,
+          video_start_time: editingPhraseStartTime,
+          video_end_time: editingPhraseEndTime,
+        },
       }, { headers });
       setSnackbar({
         message: 'フレーズを保存しました',
@@ -178,6 +190,7 @@ const OkyoForm: NextPage = () => {
       setEditingPhraseReading('');
       setEditingPhraseStartTime(0);
       setEditingPhraseEndTime(0);
+      setPhraseUpdated(true);
     } catch (err) {
       const errorMessage =
         err instanceof AxiosError && err.response
@@ -345,7 +358,7 @@ const OkyoForm: NextPage = () => {
                     読み方: {phrase.reading}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                  開始時間: {phrase.videoStartTime}
+                    開始時間: {phrase.videoStartTime}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
                     終了時間: {phrase.videoEndTime}
