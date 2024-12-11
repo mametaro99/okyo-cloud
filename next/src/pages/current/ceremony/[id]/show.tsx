@@ -1,105 +1,126 @@
-import { Box, Button, Card, CardActions, CardContent, Grid, Typography } from "@mui/material";
-import Link from "next/link";
+import React, { useState } from "react";
 import useSWR from "swr";
+import {
+  Container,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
 import { useRouter } from "next/router";
+import { NextPage } from "next";
+import { fetcher } from "@/utils";
 import Loading from "@/components/Loading";
 import Error from "@/components/Error";
-import { useRequireSignedIn } from "@/hooks/useRequireSignedIn";
-import { useUserState } from "@/hooks/useGlobalState";
-import { fetcher } from "@/utils";
-import { NextPage } from "next";
-import { useState, useEffect } from "react";
-import UserOkyoCard from "@/components/UserOkyoCard";
+import camelcaseKeys from "camelcase-keys";
 
-// Define the types for data
-type Ceremony = {
+interface OkyoPhrase {
   id: string;
-  name: string;
-  description: string;
-  okyos: Okyo[];
-};
-
-type Okyo = {
-  id: string;
-  name: string;
-  description: string;
-  okyo_phrases: OkyoPhrase[];
+  text: string;
 }
 
-type OkyoPhrase = {
+interface Okyo {
   id: string;
-  phrase_text: string;
-  order: number;
+  name: string;
+  description: string;
+  phrases: OkyoPhrase[];
+}
+
+interface CeremonyOkyoGroup {
+  id: string;
+  name: string;
+  okyos: Okyo[];
+}
+
+interface Ceremony {
+  id: string;
+  name: string;
+  description: string;
+  ceremonyOkyoGroups: CeremonyOkyoGroup[];
 }
 
 const CeremonyDetail: NextPage = () => {
   const router = useRouter();
-  const [user] = useUserState();
+  const { id } = router.query;
+  const url = process.env.NEXT_PUBLIC_API_BASE_URL + "/current/ceremony/";
+  const { data: ceremony, error } = useSWR<Ceremony>(id ? `${url}${id}` : null, fetcher);
 
-  // State to track whether the router is ready
-  const [isRouterReady, setIsRouterReady] = useState(false);
+  const [selectedOkyo, setSelectedOkyo] = useState<Okyo | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
-  // Check if the router is ready
-  useEffect(() => {
-    if (router.isReady) {
-      setIsRouterReady(true);
-    }
-  }, [router.isReady]);
+  const handleDialogOpen = (okyo: Okyo) => {
+    setSelectedOkyo(okyo);
+    setDialogOpen(true);
+  };
 
-  // URLs for fetching data
-  const ceremonyUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/current/ceremony/${router.query.id}`;
-  const userUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/current/user`;
-  // Fetch data using SWR
-  const { data: ceremonyData, error: ceremonyError } = useSWR<Ceremony>(isRouterReady ? ceremonyUrl : null, fetcher);
-  const { data: currentUser, error: userError } = useSWR(isRouterReady ? userUrl : null, fetcher);
+  const handleDialogClose = () => {
+    setSelectedOkyo(null);
+    setDialogOpen(false);
+  };
 
-  if (ceremonyError) return <Error />;
-  if (!ceremonyData || !currentUser) return <Loading />;
+  if (error) return <Error />;
+  if (!ceremony) return <Loading />;
 
-  const userSectName = currentUser.sect?.name;
-  const ceremony = ceremonyData || [];
+  const ceremonyOkyoGroups: CeremonyOkyoGroup[] = camelcaseKeys(ceremony.ceremonyOkyoGroups, {
+    deep: true,
+  }) as CeremonyOkyoGroup[];
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh', padding: 2 }}>
-      <Box sx={{ width: '100%', maxWidth: 1200 }}>
-        <Typography variant="h6" gutterBottom textAlign="center">
-          所属している宗派のみ、編集可能です。
-        </Typography>
-        <Grid container spacing={3}>
-          {okyos.map((okyo) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={okyo.id}>
-              <UserOkyoCard
-                id={okyo.id}
-                name={okyo.name}
-                description={okyo.description}
-                sects={okyo.sects}
-                userSectName={userSectName}
-              />
-            </Grid>
-          ))}
-        </Grid>
+    <Container>
+      <Typography variant="h4" gutterBottom>
+        {ceremony.name}
+      </Typography>
+      <Typography variant="body1" gutterBottom>
+        {ceremony.description}
+      </Typography>
 
-        {/* Create New Okyo Link */}
-        <Box sx={{ marginTop: 4, textAlign: "center" }}>
-          <Button
-            component={Link}
-            href="/current/okyos/new"
-            variant="contained"
-            color="primary"
-            sx={{
-              color: 'white',
-              textTransform: 'none',
-              fontSize: 16,
-              borderRadius: 2,
-              width: 180,
-              boxShadow: 'none',
-            }}
-          >
-            新しいお経を作成
-          </Button>
-        </Box>
-      </Box>
-    </Box>
+      {ceremonyOkyoGroups.map((group) => (
+        <div key={group.id}>
+          <Typography variant="h6" gutterBottom>
+            {group.name}
+          </Typography>
+          <List>
+            {group.okyos.map((okyo) => (
+              <ListItem key={okyo.id} button onClick={() => handleDialogOpen(okyo)}>
+                <ListItemText primary={okyo.name} secondary={okyo.description} />
+              </ListItem>
+            ))}
+          </List>
+        </div>
+      ))}
+
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
+        {selectedOkyo && (
+          <>
+            <DialogTitle>{selectedOkyo.name}</DialogTitle>
+            <DialogContent>
+              <DialogContentText>{selectedOkyo.description}</DialogContentText>
+              <Typography variant="h6" gutterBottom>
+                Phrases:
+              </Typography>
+              <List>
+                {selectedOkyo.phrases.map((phrase) => (
+                  <ListItem key={phrase.id}>
+                    <ListItemText primary={phrase.text} />
+                  </ListItem>
+                ))}
+              </List>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleDialogClose} color="primary">
+                Close
+              </Button>
+            </DialogActions>
+          </>
+        )}
+      </Dialog>
+    </Container>
   );
 };
 
