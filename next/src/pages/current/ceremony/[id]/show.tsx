@@ -103,4 +103,4 @@ const CeremonyDetail: NextPage = () => {
   );
 };
 
-export default CurrentOkyos;
+export default CeremonyDetail;
