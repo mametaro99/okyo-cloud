@@ -1,16 +1,17 @@
 class Api::V1::Current::CeremonyController < Api::V1::BaseController
   before_action :authenticate_user!, only: [:index, :create, :destroy, :update]
   before_action :set_ceremony, only: [:show, :destroy, :update]
+  
 
-  # GET /api/v1/current/ceremonies
+  # GET /api/v1/current/ceremony
   def index
     @ceremonies = current_user.ceremonies
     render json: @ceremonies, status: :ok
   end
 
-  # GET /api/v1/current/ceremonies/:id
+  # GET /api/v1/current/ceremony/:id
   def show
-    render json: @ceremony, status: :ok
+    render json: @ceremony, include: ['ceremony_okyo_groups.okyo', 'ceremony_okyo_groups.okyo.okyo_phrases'], status: :ok
   end
 
   # POST /api/v1/current/ceremonies
@@ -78,6 +79,7 @@ class Api::V1::Current::CeremonyController < Api::V1::BaseController
       end
     end
   end
+
 
   # Sets @ceremony based on the provided id
   def set_ceremony

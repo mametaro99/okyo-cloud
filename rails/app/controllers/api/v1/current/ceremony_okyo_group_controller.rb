@@ -9,12 +9,12 @@ class Api::V1::Current::CeremonyOkyoGroupController < Api::V1::BaseController
     render json: ceremony_okyo_groups, status: :ok
   end
 
-  # GET /api/v1/current/ceremonies/:ceremony_id/ceremony_okyo_groups/:id
+  # GET /api/v1/current/ceremony/:ceremony_id/ceremony_okyo_groups/:id
   def show
     render json: @ceremony_okyo_group, status: :ok
   end
 
-  # POST /api/v1/current/ceremonies/:ceremony_id/okyos/:okyo_id/ceremony_okyo_groups
+  # POST /api/v1/current/ceremony/:ceremony_id/okyos/:okyo_id/ceremony_okyo_groups
   def create
     ceremony_okyo_group = @ceremony.ceremony_okyo_groups.new(ceremony_okyo_group_params)
     ceremony_okyo_group.okyo = @okyo
@@ -26,7 +26,7 @@ class Api::V1::Current::CeremonyOkyoGroupController < Api::V1::BaseController
     end
   end
 
-  # PATCH/PUT /api/v1/current/ceremonies/:ceremony_id/okyos/:okyo_id/ceremony_okyo_groups/:id
+  # PATCH/PUT /api/v1/current/ceremony/:ceremony_id/okyos/:okyo_id/ceremony_okyo_groups/:id
   def update
     ceremony_okyo_group = CeremonyOkyoGroup.find(params[:id])
     if ceremony_okyo_group.update(ceremony_okyo_group_params)
