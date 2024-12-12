@@ -12,7 +12,11 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useRouter } from "next/router";
 import { NextPage } from "next";
 import { fetcher } from "@/utils";
@@ -67,31 +71,56 @@ const CeremonyDetail: NextPage = () => {
   if (error) return <Error />;
   if (!ceremony) return <Loading />;
 
-  const ceremonyOkyoGroups: CeremonyOkyoGroup[] = camelcaseKeys(ceremony.ceremonyOkyoGroups, {
-    deep: true,
-  }) as CeremonyOkyoGroup[];
-
+  // camelcaseKeys で ceremony データ全体を変換
+  const ceremonyData = camelcaseKeys(ceremony, { deep: true }) as Ceremony;
+  console.log(ceremonyData);
+  console.log(ceremonyData.ceremonyOkyoGroups);
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
-        {ceremony.name}
+        {ceremonyData.name}
       </Typography>
       <Typography variant="body1" gutterBottom>
-        {ceremony.description}
+        {ceremonyData.description}
       </Typography>
 
-      {ceremonyOkyoGroups.map((group) => (
+      {ceremonyData.ceremonyOkyoGroups.map((group) => (
         <div key={group.id}>
-          <Typography variant="h6" gutterBottom>
-            {group.name}
-          </Typography>
-          <List>
-            {group.okyos.map((okyo) => (
-              <ListItem key={okyo.id} button onClick={() => handleDialogOpen(okyo)}>
-                <ListItemText primary={okyo.name} secondary={okyo.description} />
-              </ListItem>
-            ))}
-          </List>
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls={`panel-${group.id}-content`}
+              id={`panel-${group.id}-header`}
+            >
+              <Typography variant="h6" gutterBottom>
+                {group.okyo.name}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <List>
+                <ListItem button onClick={() => handleDialogOpen(group.okyo)}>
+                  <ListItemText
+                  secondary={
+                    <>
+                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                      {group.okyo.okyoPhrases.map((phrase, index) => (
+                      <div key={phrase.id}>
+                        {index + 1}. {phrase.phraseText}
+                        {phrase.reading && (
+                        <Typography variant="body2" color="text.secondary">
+                          {phrase.reading}
+                        </Typography>
+                        )}
+                      </div>
+                      ))}
+                    </Typography>
+                    </>
+                  }
+                 />
+                </ListItem>
+              </List>
+            </AccordionDetails>
+          </Accordion>
         </div>
       ))}
 
