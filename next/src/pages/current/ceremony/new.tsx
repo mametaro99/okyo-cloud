@@ -16,6 +16,7 @@ import { useSnackbarState } from '@/hooks/useGlobalState';
 import { styles } from '@/styles';
 import useSWR from 'swr';
 import { fetcher } from '@/utils';
+import { NextPage } from 'next';
 
 type Ceremony = {
   name: string;
@@ -25,7 +26,7 @@ type Ceremony = {
   ceremony_okyo_groups_attributes: { id: number | null; okyo_id: string; order: number }[];
 };
 
-const CreateCeremonyForm = () => {
+const CreateCeremonyForm: NextPage = () => {
   const router = useRouter();
   const [, setSnackbar] = useSnackbarState();
   const [isLoading, setIsLoading] = useState(false);
@@ -124,7 +125,7 @@ const CreateCeremonyForm = () => {
   };
 
   return (
-    <Box css={styles.pageMinHeight}>
+    <Box css={styles.pageMinHeight} sx={{ maxWidth: '800px', mx: 'auto', p: 2 }}>
       <Typography variant="h4" sx={{ mb: 4 }}>
         式典の新規作成
       </Typography>
