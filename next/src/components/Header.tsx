@@ -118,6 +118,14 @@ const Header = () => {
                         お経の編集画面へ
                       </MenuItem>
                      </Link>
+                      <Link href="/current/ceremony">
+                        <MenuItem>
+                          <ListItemIcon>
+                            <ArticleIcon fontSize="small" />
+                          </ListItemIcon>
+                          式典の一覧画面へ
+                        </MenuItem>
+                      </Link>
                      <Link href="/sign_out">
                        <MenuItem>
                          <ListItemIcon>
