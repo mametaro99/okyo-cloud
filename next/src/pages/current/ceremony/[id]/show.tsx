@@ -118,7 +118,7 @@ const CeremonyDetail: NextPage = () => {
                     <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
                       {group.okyo.okyoPhrases.map((phrase, index) => (
                       <div key={phrase.id}>
-                        {index + 1}. {phrase.phraseText}
+                        {phrase.phraseText}
                         {phrase.reading && (
                         <Typography variant="body2" color="text.secondary">
                           {phrase.reading}
