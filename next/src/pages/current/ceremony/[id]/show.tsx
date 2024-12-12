@@ -98,7 +98,7 @@ const CeremonyDetail: NextPage = () => {
             </AccordionSummary>
             <AccordionDetails>
               <List>
-                <ListItem button onClick={() => handleDialogOpen(group.okyo)}>
+                <ListItem>
                   <ListItemText
                   secondary={
                     <>
