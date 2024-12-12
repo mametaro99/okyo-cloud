@@ -23,6 +23,8 @@ import { fetcher } from "@/utils";
 import Loading from "@/components/Loading";
 import Error from "@/components/Error";
 import camelcaseKeys from "camelcase-keys";
+import { QRCodeCanvas as QRCode } from "qrcode.react";
+import { useUserState } from "@/hooks/useGlobalState";
 
 interface OkyoPhrase {
   id: string;
@@ -46,6 +48,7 @@ interface Ceremony {
   id: string;
   name: string;
   description: string;
+  userId: number;
   ceremonyOkyoGroups: CeremonyOkyoGroup[];
 }
 
@@ -57,6 +60,7 @@ const CeremonyDetail: NextPage = () => {
 
   const [selectedOkyo, setSelectedOkyo] = useState<Okyo | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [user] = useUserState();
 
   const handleDialogOpen = (okyo: Okyo) => {
     setSelectedOkyo(okyo);
@@ -73,13 +77,22 @@ const CeremonyDetail: NextPage = () => {
 
   // camelcaseKeys で ceremony データ全体を変換
   const ceremonyData = camelcaseKeys(ceremony, { deep: true }) as Ceremony;
-  console.log(ceremonyData);
-  console.log(ceremonyData.ceremonyOkyoGroups);
+  const isUserCreator = user.isSignedIn && user.id === ceremonyData.userId; // ユーザーが作成者か確認
+
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
         {ceremonyData.name}
       </Typography>
+
+      {isUserCreator && (
+        <div>
+          <Typography variant="h6" gutterBottom>
+            QRコード:
+          </Typography>
+          <QRCode value={`${url}/${id}/show`} />
+        </div>
+      )}
       <Typography variant="body1" gutterBottom>
         {ceremonyData.description}
       </Typography>
