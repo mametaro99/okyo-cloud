@@ -10,6 +10,7 @@ import { fetcher } from "@/utils";
 import { NextPage } from "next";
 import { useState, useEffect } from "react";
 import UserOkyoCard from "@/components/UserOkyoCard";
+import { styles } from "@/styles";
 
 // Define the types for data
 type Okyo = {
@@ -57,43 +58,58 @@ const CurrentOkyos: NextPage = () => {
   const okyos = okyoData || [];
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh', padding: 2 }}>
-      <Box sx={{ width: '100%', maxWidth: 1200 }}>
-        <Typography variant="h6" gutterBottom textAlign="center">
-          所属している宗派のみ、編集可能です。
-        </Typography>
-        <Grid container spacing={3}>
-          {okyos.map((okyo) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={okyo.id}>
-              <UserOkyoCard
-                id={okyo.id}
-                name={okyo.name}
-                description={okyo.description}
-                sects={okyo.sects}
-                userSectName={userSectName}
-              />
-            </Grid>
-          ))}
-        </Grid>
+    <Box
+      css={styles.pageMinHeight}
+      sx={{
+        backgroundImage: 'url(/unkai.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh', padding: 2 }}>
+        <Box sx={{ width: '100%', maxWidth: 1200 }}>
+          <Typography variant="h6" gutterBottom textAlign="center">
+            所属している宗派のみ、編集可能です。
+          </Typography>
+          <Grid container spacing={3}>
+            {okyos.map((okyo) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={okyo.id}>
+                <UserOkyoCard
+                  id={okyo.id}
+                  name={okyo.name}
+                  description={okyo.description}
+                  sects={okyo.sects}
+                  userSectName={userSectName}
+                />
+              </Grid>
+            ))}
+          </Grid>
 
-        {/* Create New Okyo Link */}
-        <Box sx={{ marginTop: 4, textAlign: "center" }}>
-          <Button
-            component={Link}
-            href="/current/okyos/new"
-            variant="contained"
-            color="primary"
-            sx={{
-              color: 'white',
-              textTransform: 'none',
-              fontSize: 16,
-              borderRadius: 2,
-              width: 180,
-              boxShadow: 'none',
-            }}
-          >
-            新しいお経を作成
-          </Button>
+          {/* Create New Okyo Link */}
+          <Box sx={{ marginTop: 4, textAlign: "center" }}>
+            <Button
+              component={Link}
+              href="/current/okyos/new"
+              variant="contained"
+              color="primary"
+              sx={{
+                color: 'white',
+                textTransform: 'none',
+                fontSize: 16,
+                borderRadius: 2,
+                width: 180,
+                boxShadow: 'none',
+              }}
+            >
+              新しいお経を作成
+            </Button>
+          </Box>
         </Box>
       </Box>
     </Box>
