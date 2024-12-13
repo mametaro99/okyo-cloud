@@ -36,13 +36,13 @@ const CeremonyList: NextPage = () => {
   if (error) return <Error />;
   if (!ceremonies) return <Loading />;
 
-  // camelcaseKeys で全ての式典データを変換
+  // camelcaseKeys で全ての式典・葬式データを変換
   const ceremonyList = ceremonies.map((ceremony) => camelcaseKeys({ ...ceremony }));
 
   return (
     <Container sx={{ maxWidth: "800px", mx: "auto", p: 2 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        式典一覧
+        式典・葬式・葬式一覧
       </Typography>
 
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
