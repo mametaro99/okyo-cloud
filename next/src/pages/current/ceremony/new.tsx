@@ -23,7 +23,7 @@ type Ceremony = {
   event_date: string;
   location: string;
   description: string;
-  ceremony_okyo_groups_attributes: { id: number | null; okyo_id: string; order: number }[];
+  ceremony_okyo_groups: { id: number | null; okyo_id: string; order: number }[];
 };
 
 const CreateCeremonyForm: NextPage = () => {
@@ -35,7 +35,7 @@ const CreateCeremonyForm: NextPage = () => {
     event_date: '',
     location: '',
     description: '',
-    ceremony_okyo_groups_attributes: [],
+    ceremony_okyo_groups: [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { data: okyosData } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_URL}/okyo`, fetcher);
@@ -46,7 +46,7 @@ const CreateCeremonyForm: NextPage = () => {
     if (!ceremony.name) newErrors.name = '名前を入力してください';
     if (!ceremony.event_date) newErrors.event_date = '日付を入力してください';
 
-    ceremony.ceremony_okyo_groups_attributes.forEach((group, index) => {
+    ceremony.ceremony_okyo_groups.forEach((group, index) => {
       if (!group.okyo_id) {
         newErrors[`okyo_${index}`] = `お経 ${index + 1} を選択してください`;
       }
@@ -103,25 +103,25 @@ const CreateCeremonyForm: NextPage = () => {
   const addOkyoGroup = () => {
     setCeremony((prev) => ({
       ...prev,
-      ceremony_okyo_groups_attributes: [
-        ...prev.ceremony_okyo_groups_attributes,
-        { id: null, okyo_id: '', order: prev.ceremony_okyo_groups_attributes.length + 1 },
+      ceremony_okyo_groups: [
+        ...prev.ceremony_okyo_groups,
+        { id: null, okyo_id: '', order: prev.ceremony_okyo_groups.length + 1 },
       ],
     }));
   };
 
   const removeOkyoGroup = (index: number) => {
-    const updatedGroups = ceremony.ceremony_okyo_groups_attributes.filter((_, i) => i !== index);
+    const updatedGroups = ceremony.ceremony_okyo_groups.filter((_, i) => i !== index);
     setCeremony({
       ...ceremony,
-      ceremony_okyo_groups_attributes: updatedGroups,
+      ceremony_okyo_groups: updatedGroups,
     });
   };
 
   const handleOkyoChange = (okyoId: string, index: number) => {
-    const updatedGroups = [...ceremony.ceremony_okyo_groups_attributes];
+    const updatedGroups = [...ceremony.ceremony_okyo_groups];
     updatedGroups[index] = { ...updatedGroups[index], okyo_id: okyoId };
-    setCeremony({ ...ceremony, ceremony_okyo_groups_attributes: updatedGroups });
+    setCeremony({ ...ceremony, ceremony_okyo_groups: updatedGroups });
   };
 
   return (
@@ -169,7 +169,7 @@ const CreateCeremonyForm: NextPage = () => {
           sx={{ mb: 2 }}
         />
 
-        {ceremony.ceremony_okyo_groups_attributes.map((group, index) => (
+        {ceremony.ceremony_okyo_groups.map((group, index) => (
           <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <FormControl fullWidth sx={{ mr: 2 }}>
               <InputLabel>お経 {index + 1}</InputLabel>
