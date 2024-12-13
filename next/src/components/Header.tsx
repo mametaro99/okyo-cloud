@@ -71,23 +71,9 @@ const Header = () => {
                         boxShadow: 'none',
                       }}
                     >
-                      Sign in
+                      和尚さんログイン
                     </Button>
                   </Link>
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    sx={{
-                      textTransform: 'none',
-                      fontSize: 16,
-                      borderRadius: 2,
-                      boxShadow: 'none',
-                      border: '1.5px solid #3EA8FF',
-                      ml: 2,
-                    }}
-                  >
-                    Sign Up
-                  </Button>
                 </Box>
               )}
               {user.isSignedIn && (
