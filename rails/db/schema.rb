@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_12_07_083110) do
+ActiveRecord::Schema[7.0].define(version: 2024_12_13_025542) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -57,7 +57,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_07_083110) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["ceremony_id"], name: "index_ceremony_okyo_groups_on_ceremony_id"
-    t.index ["okyo_id", "ceremony_id", "order"], name: "index_ceremony_okyo_groups_on_okyo_id_and_ceremony_id_and_order", unique: true
     t.index ["okyo_id"], name: "index_ceremony_okyo_groups_on_okyo_id"
   end
 
