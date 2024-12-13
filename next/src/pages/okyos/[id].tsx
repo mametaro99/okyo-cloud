@@ -18,6 +18,7 @@ import Error from '@/components/Error'
 import Loading from '@/components/Loading'
 import { fetcher } from '@/utils'
 import VideoAndSubtitle from '@/components/VideoAndSubtitle' // 新しいコンポーネントをインポート
+import { styles } from '@/styles'
 
 type OkyoPhraseProps = {
   id: number
@@ -64,13 +65,25 @@ const OkyoDetail: NextPage = () => {
 
   return (
     <Box
+      css={styles.pageMinHeight}
       sx={{
-        backgroundColor: '#EDF2F7',
-        pb: 6,
-        minHeight: 'calc(100vh - 57px)',
+        background: 'url(/unkai.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'repeat',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
-      <Container maxWidth="lg">
+      <Container 
+        maxWidth="lg"
+        sx={{
+          backgroundColor: 'rgba(255, 255, 255, 0.4)'
+        }}
+      >
         <Box sx={{ pt: 6, pb: 3 }}>
           <Typography
             component="h2"
@@ -237,6 +250,7 @@ const OkyoDetail: NextPage = () => {
           </Box>
         </Box>
       </Container>
+    {/* </Box> */}
     </Box>
   )
 }
