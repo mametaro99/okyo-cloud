@@ -47,6 +47,7 @@ interface CeremonyOkyoGroup {
 interface Ceremony {
   id: string;
   name: string;
+  location: string;
   description: string;
   userId: number;
   ceremonyOkyoGroups: CeremonyOkyoGroup[];
