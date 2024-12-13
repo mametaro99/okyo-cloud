@@ -1,6 +1,6 @@
 class Api::V1::Current::CeremonyOkyoGroupController < Api::V1::BaseController
   before_action :set_ceremony
-  before_action :set_okyo
+  before_action :set_okyo, only: [:create, :update]
   before_action :set_ceremony_okyo_group, only: [:show, :update, :destroy]
 
   # GET /api/v1/current/ceremonies/:ceremony_id/ceremony_okyo_groups
