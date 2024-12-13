@@ -25,18 +25,18 @@ import camelcaseKeys from 'camelcase-keys';
 import { NextPage } from 'next';
 
 // Define types for ceremony and okyo group
-interface OkyoGroup {
+type OkyoGroup = {
   id: number | null;
   okyo_id: string;
   order: number;
 }
 
-interface Ceremony {
+type Ceremony = {
   name: string;
-  event_date: Date;
+  event_date: string;
   location: string;
   description: string;
-  ceremony_okyo_groups_attributes: OkyoGroup[];
+  ceremony_okyo_groups: OkyoGroup[];
 }
 
 const CeremonyForm: NextPage = () => {
@@ -47,10 +47,10 @@ const CeremonyForm: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [ceremony, setCeremony] = useState<Ceremony>({
     name: '',
-    event_date: new Date(),
+    event_date: '',
     location: '',
     description: '',
-    ceremony_okyo_groups_attributes: [],
+    ceremony_okyo_groups: [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -63,20 +63,27 @@ const CeremonyForm: NextPage = () => {
 
   useEffect(() => {
     if (ceremonyData) {
+      const camelcasedCeremony = camelcaseKeys(ceremonyData, { deep: true });
+  
+      // Ensure event_date is properly converted to a Date object
+      const eventDate = new Date(camelcasedCeremony.eventDate);
+  
+      const okyoGroups: OkyoGroup[] =
+        camelcasedCeremony.ceremonyOkyoGroups?.map((group: any) => ({
+          id: group.id || null,
+          okyo_id: group.okyoId || '',
+          order: group.order || 0,
+        })) || [];
 
-      const camelcasedCeremony = {
-        name: ceremonyData.name,
-        event_date: ceremonyData.event_date,
-        location: ceremonyData.location,
-        description: ceremonyData.description,
-      };
-      const okyoGroups: OkyoGroup[] = ceremonyData.ceremony_okyo_groups_attributes?.map((group: any) => ({
-        okyo_id: group.okyoId,
-        order: group.order,
-      })) || [];
+      console.log(camelcasedCeremony.eventDate);
+      console.log(eventDate);
+  
       setCeremony({
-        ...camelcasedCeremony,
-        ceremony_okyo_groups_attributes: okyoGroups,
+        name: camelcasedCeremony.name || '',
+        event_date: camelcasedCeremony.eventDate || '',
+        location: camelcasedCeremony.location || '',
+        description: camelcasedCeremony.description || '',
+        ceremony_okyo_groups: okyoGroups,
       });
     }
   }, [ceremonyData]);
@@ -89,7 +96,7 @@ const CeremonyForm: NextPage = () => {
     if (!ceremony.name) newErrors.name = '名前を入力してください';
     if (!ceremony.event_date) newErrors.event_date = '日付を入力してください';
 
-    ceremony.ceremony_okyo_groups_attributes.forEach((group, index) => {
+    ceremony.ceremony_okyo_groups.forEach((group, index) => {
       if (!group.okyo_id) {
         newErrors[`okyo_${index}`] = `お経 ${index + 1} を選択してください`;
       }
@@ -178,22 +185,44 @@ const CeremonyForm: NextPage = () => {
   };
 
   const handleOkyoChange = (value: string, index: number) => {
-    const updatedGroups = [...ceremony.ceremony_okyo_groups_attributes];
+    const updatedGroups = [...ceremony.ceremony_okyo_groups];
     updatedGroups[index].okyo_id = value;
-    setCeremony({ ...ceremony, ceremony_okyo_groups_attributes: updatedGroups });
+    setCeremony({ ...ceremony, ceremony_okyo_groups: updatedGroups });
   };
 
-  const removeOkyoGroup = (index: number) => {
-    const updatedGroups = ceremony.ceremony_okyo_groups_attributes.filter((_, i) => i !== index);
-    setCeremony({ ...ceremony, ceremony_okyo_groups_attributes: updatedGroups });
+  const removeOkyoGroup = async (index: number, okyo_group_id: number | null) => {
+    if (id) {
+      try {
+        const headers = {
+          'access-token': localStorage.getItem('access-token') || '',
+          client: localStorage.getItem('client') || '',
+          uid: localStorage.getItem('uid') || '',
+        };
+
+        await axios.delete(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/current/ceremony/${id}/ceremony_okyo_group/${okyo_group_id}`,
+          { headers }
+        );
+        const updatedGroups = ceremony.ceremony_okyo_groups.filter((_, i) => i !== index);
+        setCeremony({ ...ceremony, ceremony_okyo_groups: updatedGroups });
+        console.log('Okyo group deleted successfully.');
+      } catch (error) {
+        setSnackbar({
+          message: '削除に失敗しました',
+          severity: 'error',
+          pathname: router.pathname,
+        });
+      }
+    }
   };
+  
 
   const addOkyoGroup = () => {
     setCeremony({
       ...ceremony,
-      ceremony_okyo_groups_attributes: [
-        ...(ceremony.ceremony_okyo_groups_attributes || []),
-        { id: null, okyo_id: '', order: (ceremony.ceremony_okyo_groups_attributes?.length || 0) + 1 },
+      ceremony_okyo_groups: [
+        ...(ceremony.ceremony_okyo_groups || []),
+        { id: null, okyo_id: '', order: (ceremony.ceremony_okyo_groups?.length || 0) + 1 },
       ],
     });
   };
@@ -239,8 +268,8 @@ const CeremonyForm: NextPage = () => {
           sx={{ mb: 2 }}
         />
 
-        {ceremony.ceremony_okyo_groups_attributes?.map((group: OkyoGroup, index: number) => (
-          <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+        {ceremony.ceremony_okyo_groups?.map((group: OkyoGroup, index: number) => (
+          <Box key={group.id || index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <FormControl fullWidth sx={{ mr: 2 }}>
               <InputLabel>お経 {index + 1}</InputLabel>
               <Select
@@ -263,7 +292,7 @@ const CeremonyForm: NextPage = () => {
             <Button
               variant="outlined"
               color="error"
-              onClick={() => removeOkyoGroup(index)}
+              onClick={() => removeOkyoGroup(index, group.id || null)}
             >
               削除
             </Button>
