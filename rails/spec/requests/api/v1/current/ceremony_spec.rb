@@ -9,7 +9,7 @@ RSpec.describe "Api::V1::Current::Ceremonies", type: :request do
       event_date: "2024-12-31",
       location: "Ceremony Location",
       description: "Ceremony Description",
-      ceremony_okyo_groups_attributes: [
+      ceremony_okyo_groups: [
         { "id": nil, "okyo_id": 1, "order": 1 }
       ]
     }
@@ -21,7 +21,7 @@ RSpec.describe "Api::V1::Current::Ceremonies", type: :request do
       event_date: "2024-12-31",
       location: "Ceremony Location",
       description: "Ceremony Description",
-      ceremony_okyo_groups_attributes: [
+      ceremony_okyo_groups: [
         { id: nil,okyo_id: nil, order: nil } # invalid okyo group
       ]
     }

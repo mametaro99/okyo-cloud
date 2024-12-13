@@ -17,7 +17,7 @@ class Api::V1::Current::CeremonyController < Api::V1::BaseController
   # POST /api/v1/current/ceremonies
   def create
     ActiveRecord::Base.transaction do
-      @ceremony = Ceremony.new(ceremony_params.except(:ceremony_okyo_groups_attributes))
+      @ceremony = Ceremony.new(ceremony_params.except(:ceremony_okyo_groups))
       @ceremony.user = current_user
 
       if @ceremony.save
@@ -35,7 +35,7 @@ class Api::V1::Current::CeremonyController < Api::V1::BaseController
 
   def update
     ActiveRecord::Base.transaction do
-      if @ceremony.update(ceremony_params.except(:ceremony_okyo_groups_attributes))
+      if @ceremony.update(ceremony_params.except(:ceremony_okyo_groups))
         # CeremonyOkyoGroupsを更新
         handle_ceremony_okyo_groups(@ceremony)
         render json: @ceremony, status: :ok
@@ -59,7 +59,7 @@ class Api::V1::Current::CeremonyController < Api::V1::BaseController
 
   # CeremonyOkyoGroupの新規作成と更新を処理
   def handle_ceremony_okyo_groups(ceremony)
-    attributes = ceremony_params[:ceremony_okyo_groups_attributes]
+    attributes = ceremony_params[:ceremony_okyo_groups]
     return if attributes.blank?
 
     Rails.logger.info("attributes: #{attributes}")
@@ -91,7 +91,7 @@ class Api::V1::Current::CeremonyController < Api::V1::BaseController
   def ceremony_params
     params.require(:ceremony).permit(
       :name, :event_date, :location, :description,
-      ceremony_okyo_groups_attributes: [:id, :okyo_id, :order]
+      ceremony_okyo_groups: [:id, :okyo_id, :order]
     )
   end
 end
