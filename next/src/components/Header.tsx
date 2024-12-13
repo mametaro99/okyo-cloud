@@ -109,7 +109,7 @@ const Header = () => {
                           <ListItemIcon>
                             <ArticleIcon fontSize="small" />
                           </ListItemIcon>
-                          式典・葬式・葬式の一覧画面へ
+                          式典・葬式の一覧画面へ
                         </MenuItem>
                       </Link>
                      <Link href="/sign_out">
