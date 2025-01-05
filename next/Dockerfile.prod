@@ -1,5 +1,5 @@
 # --- Build Stage ---
-FROM --platform=linux/x86_64 node:19.4.0 AS builder
+  FROM --platform=linux/x86_64 node:20 AS builder
 
 # Set the working directory
 WORKDIR /app
