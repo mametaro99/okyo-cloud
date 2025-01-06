@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Typography, Link } from '@mui/material'
+import { Card, CardContent, Typography } from '@mui/material'
 
 type OkyoCardProps = {
   name: string
