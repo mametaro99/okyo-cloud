@@ -10,7 +10,7 @@ import {
   Button,
 } from '@mui/material';
 import axios, { AxiosError } from 'axios';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSnackbarState } from '@/hooks/useGlobalState';
 import { styles } from '@/styles';
