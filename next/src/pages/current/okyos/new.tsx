@@ -11,7 +11,7 @@ import {
 import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { useSnackbarState, useUserState } from '@/hooks/useGlobalState';
+import { useSnackbarState } from '@/hooks/useGlobalState';
 import { useRequireSignedIn } from '@/hooks/useRequireSignedIn';
 import { styles } from '@/styles';
 
@@ -31,7 +31,6 @@ type Sect = {
 const CreateOkyoForm: React.FC = () => {
   const router = useRouter();
   useRequireSignedIn();
-  const [user] = useUserState();
   const [, setSnackbar] = useSnackbarState();
   const [isLoading, setIsLoading] = useState(false);
   const [okyo, setOkyo] = useState<Partial<OkyoProps>>({ published: false });
