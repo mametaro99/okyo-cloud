@@ -15,7 +15,7 @@ RUN npm ci
 COPY . .
 
 # Build the Next.js app
-RUN npm run build
+# RUN npm run build
 
 # --- Run Stage ---
 FROM --platform=linux/x86_64 node:20
