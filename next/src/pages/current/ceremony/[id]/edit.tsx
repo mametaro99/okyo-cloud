@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { LoadingButton } from '@mui/lab';
 import {
   Box,
