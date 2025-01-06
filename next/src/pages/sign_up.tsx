@@ -24,7 +24,6 @@ const SignUp: NextPage = () => {
   const router = useRouter()
   const [, setSnackbar] = useSnackbarState()
   const [isLoading, setIsLoading] = useState(false)
-  const sectUrl = process.env.NEXT_PUBLIC_API_BASE_URL + '/sect'
   const [sects, setSects] = useState<Sect[]>([]); // Sect一覧
   const [selectedSect, setSelectedSect] = useState<number>(); // 選択されたsect_id
   const sectsUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/sect`;
