@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import useSWR from "swr";
 import {
@@ -65,11 +66,6 @@ const CeremonyDetail: NextPage = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [user] = useUserState();
 
-  const handleDialogOpen = (okyo: Okyo) => {
-    setSelectedOkyo(okyo);
-    setDialogOpen(true);
-  };
-
   const handleDialogClose = () => {
     setSelectedOkyo(null);
     setDialogOpen(false);
@@ -79,7 +75,7 @@ const CeremonyDetail: NextPage = () => {
   if (!ceremony) return <Loading />;
 
   // camelcaseKeys で ceremony データ全体を変換
-  const ceremonyData = camelcaseKeys(ceremony, { deep: true }) as Ceremony;
+  const ceremonyData = camelcaseKeys(JSON.parse(JSON.stringify(ceremony)) as Record<string, unknown>, { deep: true }) as unknown as Ceremony;
   const isUserCreator = user.isSignedIn && user.id === ceremonyData.userId; // ユーザーが作成者か確認
 
   return (
@@ -133,7 +129,7 @@ const CeremonyDetail: NextPage = () => {
                     secondary={
                       <>
                       <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                        {group.okyo.okyoPhrases.map((phrase, index) => (
+                        {group.okyo.okyoPhrases.map((phrase) => (
                         <div key={phrase.id}>
                           {phrase.phraseText}
                           {phrase.reading && (
