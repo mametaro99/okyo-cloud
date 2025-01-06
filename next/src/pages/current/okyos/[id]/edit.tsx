@@ -18,7 +18,6 @@ import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
 import useSWR from 'swr';
-import Error from '@/components/Error';
 import Loading from '@/components/Loading';
 import { useSnackbarState, useUserState } from '@/hooks/useGlobalState';
 import { useRequireSignedIn } from '@/hooks/useRequireSignedIn';
@@ -212,20 +211,6 @@ const OkyoForm: NextPage = () => {
     setEditingPhraseReading('');
     setEditingPhraseStartTime(0);
     setEditingPhraseEndTime(0);
-  };
-
-  const handleNewPhrase = (
-    phraseText: string,
-    meaning: string,
-    reading: string,
-    startTime: number,
-    endTime: number
-  ) => {
-    setEditingPhraseText(phraseText);
-    setEditingPhraseMeaning(meaning);
-    setEditingPhraseReading(reading);
-    setEditingPhraseStartTime(startTime);
-    setEditingPhraseEndTime(endTime);
   };
 
   const handleCreatePhrase = async () => {
