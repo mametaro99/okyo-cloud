@@ -1,7 +1,6 @@
 import { Box, Grid, Container, Link } from '@mui/material'
 import camelcaseKeys from 'camelcase-keys'
 import type { NextPage } from 'next'
-import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import OkyoCard from '@/components/OkyoCard'
 import Error from '@/components/Error'
@@ -50,7 +49,7 @@ const Index: NextPage = () => {
     >
       <Container maxWidth="md" sx={{ pt: 6 }}>
         <Grid container spacing={4}>
-          {okyos.map((okyo: OkyoProps, i: number) => (
+          {okyos.map((okyo: OkyoProps) => (
             <Grid key={okyo.id} item xs={6} md={4}>
               <Link href={'/okyos/' + okyo.id}>
                 <OkyoCard
