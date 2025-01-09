@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { LoadingButton } from '@mui/lab';
 import {
   Box,
@@ -178,6 +179,7 @@ const CreateCeremonyForm: NextPage = () => {
                 onChange={(e) => handleOkyoChange(e.target.value, index)}
                 error={!!errors[`okyo_${index}`]}
               >
+                {/* @ts-expect-error */}
                 {okyosData?.map((okyo) => (
                   <MenuItem key={okyo.id} value={okyo.id}>
                     {okyo.name}

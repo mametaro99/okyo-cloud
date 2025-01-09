@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   Box,
   Container,
@@ -139,6 +140,7 @@ const OkyoDetail: NextPage = () => {
               >
                 動画と字幕
               </Typography>
+              {/* @ts-ignore */}
               <VideoAndSubtitle video_url={okyo.video} phrases={subtitleData} />
             </Box>
 

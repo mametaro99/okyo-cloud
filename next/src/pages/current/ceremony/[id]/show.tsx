@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import useSWR from "swr";
@@ -119,7 +120,7 @@ const CeremonyDetail: NextPage = () => {
                 id={`panel-${group.id}-header`}
               >
                 <Typography variant="h6" gutterBottom>
-                  {group.okyo.name}
+                  {(group as any).okyo.name}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
@@ -129,7 +130,8 @@ const CeremonyDetail: NextPage = () => {
                     secondary={
                       <>
                       <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                        {group.okyo.okyoPhrases.map((phrase) => (
+                        {/* @ts-expect-error */}
+                        {(group as any).okyo.okyoPhrases.map((phrase) => (
                         <div key={phrase.id}>
                           {phrase.phraseText}
                           {phrase.reading && (

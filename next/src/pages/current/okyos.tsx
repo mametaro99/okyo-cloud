@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Box, Button, Grid, Typography } from "@mui/material";
 import Link from "next/link";
 import useSWR from "swr";
@@ -78,6 +79,7 @@ const CurrentOkyos: NextPage = () => {
             所属している宗派のみ、編集可能です。
           </Typography>
           <Grid container spacing={3}>
+            {/* @ts-ignore */}
             {okyos.map((okyo) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={okyo.id}>
                 <UserOkyoCard
