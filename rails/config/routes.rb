@@ -22,6 +22,10 @@ Rails.application.routes.draw do
         get "user", to: "users#show"
         resources :user, only: [:show]
       end
+
+      namespace :user do
+        resource :confirmations, only: [:update]
+      end
     end
   end
 end
