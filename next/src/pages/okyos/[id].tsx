@@ -40,7 +40,7 @@ type OkyoProps = {
   articleUrl: string
   published: boolean
   createdAt: string
-  updatedAt: string
+  fromToday: string
 }
 
 const OkyoDetail: NextPage = () => {
@@ -129,21 +129,24 @@ const OkyoDetail: NextPage = () => {
             </Card>
 
             {/* 動画と字幕の表示 */}
-            <Box sx={{ mt: 4 }}>
-              <Typography
-                component="h3"
-                sx={{
-                  mb: 2,
-                  fontSize: { xs: 18, sm: 20 },
-                  fontWeight: 'bold',
-                }}
-              >
-                動画と字幕
-              </Typography>
+            
               {/* @ts-ignore */}
-              <VideoAndSubtitle video_url={okyo.video} phrases={subtitleData} />
-            </Box>
-
+            { okyo.video && (
+              <Box sx={{ mt: 4 }}>
+                <Typography
+                  component="h3"
+                  sx={{
+                    mb: 2,
+                    fontSize: { xs: 18, sm: 20 },
+                    fontWeight: 'bold',
+                  }}
+                >
+                  動画と字幕
+                </Typography>
+                  <VideoAndSubtitle video_url={okyo.video} phrases={subtitleData} />
+              </Box>
+            )}
+            
             <Typography
               component="h3"
               sx={{
@@ -243,7 +246,7 @@ const OkyoDetail: NextPage = () => {
                       <ListItemText primary="更新日" />
                     </Box>
                     <Box>
-                      <ListItemText primary={okyo.updatedAt} />
+                      <ListItemText primary={okyo.fromToday} />
                     </Box>
                   </Box>
                 </ListItem>
