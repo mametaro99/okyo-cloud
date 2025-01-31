@@ -60,6 +60,12 @@ const OkyoForm: NextPage = () => {
   const [editingPhraseStartTime, setEditingPhraseStartTime] = useState<number>(0);
   const [editingPhraseEndTime, setEditingPhraseEndTime] = useState<number>(0);
   const [editingPhraseReading, setEditingPhraseReading] = useState<string>('');
+  const [creatingPhraseText, setCreatingPhraseText] = useState<string>('');
+  const [creatingPhraseMeaning, setCreatingPhraseMeaning] = useState<string>('');
+  const [creatingPhraseStartTime, setCreatingPhraseStartTime] = useState<string>('');
+  const [creatingPhraseEndTime, setCreatingPhraseEndTime] = useState<string>('');
+  const [creatingPhraseReading, setCreatingPhraseReading] = useState<string>('');
+
   const [phraseSaved, setPhraseSaved] = useState(false);
 
   const { id } = router.query;
@@ -227,11 +233,11 @@ const OkyoForm: NextPage = () => {
     try {
       await axios.post(`${phraseUrl}`, {
         okyo_phrase: {
-          phrase_text: editingPhraseText,
-          meaning: editingPhraseMeaning,
-          reading: editingPhraseReading,
-          video_start_time: editingPhraseStartTime,
-          video_end_time: editingPhraseEndTime,
+          phrase_text: creatingPhraseText,
+          meaning: creatingPhraseMeaning,
+          reading: creatingPhraseReading,
+          video_start_time: creatingPhraseStartTime,
+          video_end_time: creatingPhraseEndTime,
           order: maxOrder + 1,
         },
       }, { headers });
@@ -241,12 +247,11 @@ const OkyoForm: NextPage = () => {
         pathname: router.pathname,
       });
 
-      setEditingPhraseId(null);
-      setEditingPhraseText('');
-      setEditingPhraseMeaning('');
-      setEditingPhraseReading('');
-      setEditingPhraseStartTime(0);
-      setEditingPhraseEndTime(0);
+      setCreatingPhraseText('');
+      setCreatingPhraseMeaning('');
+      setCreatingPhraseReading('');
+      setCreatingPhraseStartTime(0);
+      setCreatingPhraseEndTime(0);
       setPhraseSaved(true);
     } catch (err) {
       const errorMessage =
@@ -470,38 +475,38 @@ const OkyoForm: NextPage = () => {
             <TextField
               fullWidth
               label="フレーズ"
-              value={editingPhraseText}
-              onChange={(e) => setEditingPhraseText(e.target.value)}
+              value={creatingPhraseText}
+              onChange={(e) => setCreatingPhraseText(e.target.value)}
               sx={{ mb: 2 }}
             />
             <TextField
               fullWidth
               label="意味"
-              value={editingPhraseMeaning}
-              onChange={(e) => setEditingPhraseMeaning(e.target.value)}
+              value={creatingPhraseMeaning}
+              onChange={(e) => setCreatingPhraseMeaning(e.target.value)}
               sx={{ mb: 2 }}
             />
             <TextField
               fullWidth
               label="読み方"
-              value={editingPhraseReading}
-              onChange={(e) => setEditingPhraseReading(e.target.value)}
+              value={creatingPhraseReading}
+              onChange={(e) => setCreatingPhraseReading(e.target.value)}
               sx={{ mb: 2 }}
             />
             <TextField
               fullWidth
               label="開始時間"
               type="number"
-              value={editingPhraseStartTime}
-              onChange={(e) => setEditingPhraseStartTime(Number(e.target.value))}
+              value={creatingPhraseStartTime}
+              onChange={(e) => setCreatingPhraseStartTime(e.target.value)}
               sx={{ mb: 2 }}
             />
             <TextField
               fullWidth
               label="終了時間"
               type="number"
-              value={editingPhraseEndTime}
-              onChange={(e) => setEditingPhraseEndTime(Number(e.target.value))}
+              value={creatingPhraseEndTime}
+              onChange={(e) => setCreatingPhraseEndTime(e.target.value)}
               sx={{ mb: 2 }}
             />
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
