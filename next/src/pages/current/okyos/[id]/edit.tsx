@@ -267,6 +267,36 @@ const OkyoForm: NextPage = () => {
     }
   };
 
+  const handleDeletePhrase = async (phraseId: number) => {
+    const headers = {
+      'access-token': localStorage.getItem('access-token'),
+      client: localStorage.getItem('client'),
+      uid: localStorage.getItem('uid'),
+    };
+
+    try {
+      await axios.delete(`${phraseUrl}/${phraseId}`, { headers });
+      setSnackbar({
+        message: 'フレーズを削除しました',
+        severity: 'success',
+        pathname: router.pathname,
+      });
+
+      setPhraseSaved(true);
+    } catch (err) {
+      const errorMessage =
+        err instanceof AxiosError && err.response
+          ? err.response.data.message || '不明なエラーが発生しました'
+          : 'ネットワークエラーが発生しました';
+
+      setSnackbar({
+        message: `フレーズの削除に失敗しました: ${errorMessage}`,
+        severity: 'error',
+        pathname: router.pathname,
+      });
+    }
+  }
+
   const handleDragEnd = async (event: React.DragEvent, index: number) => {
     // ドラッグ＆ドロップで並べ替え処理を実装
     const beforeOrder = phrases[index].order;
@@ -391,6 +421,7 @@ const OkyoForm: NextPage = () => {
 
       <Box sx={{ mt: 4 }}>
         <Typography variant="h5">お経フレーズ</Typography>
+        <p>※フレーズのカードをドラック＆ドロップすることで順番を変更することができます。</p>
         {phrases.map((phrase, index) => (
           <Card key={phrase.id} sx={{ mb: 2 }} draggable onDragEnd={(e) => handleDragEnd(e, index)}>
             <CardContent>
@@ -442,27 +473,58 @@ const OkyoForm: NextPage = () => {
                   </Box>
                 </Box>
               ) : (
-                <Box>
-                  <Typography variant="h6">{phrase.phraseText}</Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {phrase.meaning}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    読み方: {phrase.reading}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    開始時間: {phrase.videoStartTime}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    終了時間: {phrase.videoEndTime}
-                  </Typography>
-                  <IconButton
-                    edge="end"
-                    onClick={() => handleEditPhrase(phrase.id, phrase.phraseText, phrase.meaning, phrase.reading, phrase.videoStartTime, phrase.videoEndTime)}
-                    sx={{ ml: 1 }}
-                  >
-                    編集
-                  </IconButton>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Box>
+                    <Typography variant="h6">{phrase.phraseText}</Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {phrase.meaning}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      読み方: {phrase.reading}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      開始時間: {phrase.videoStartTime}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      終了時間: {phrase.videoEndTime}
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Button
+                      onClick={() => handleEditPhrase(phrase.id, phrase.phraseText, phrase.meaning, phrase.reading, phrase.videoStartTime, phrase.videoEndTime)}
+                      sx={{
+                        color: 'white',
+                        textTransform: 'none',
+                        fontSize: 14,
+                        borderRadius: 2,
+                        width: 70,
+                        boxShadow: 'none',
+                        mr: 2,
+                        ml: 1,
+                        mt: 1,
+                      }}
+                      color="primary"
+                      variant="contained"
+                    >
+                      編集
+                    </Button>
+                    <Button 
+                      onClick={() => handleDeletePhrase(phrase.id)} 
+                      color="error"
+                      variant="contained"
+                      sx={{
+                        color: 'white',
+                        textTransform: 'none',
+                        fontSize: 14,
+                        borderRadius: 2,
+                        width: 70,
+                        boxShadow: 'none',
+                        mt: 1,
+                      }}
+                    >
+                      削除
+                    </Button>
+                  </Box>
                 </Box>
               )}
             </CardContent>
