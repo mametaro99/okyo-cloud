@@ -94,20 +94,30 @@ const CeremonyDetail: NextPage = () => {
         justifyContent: 'center',
       }}
     >
-      <Container>
-        <Typography variant="h4" gutterBottom>
+      <Container
+        sx={{
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          borderRadius: '8px',
+          padding: '16px',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+          marginTop: '16px',
+        }}
+      >
+        <Typography variant="h4" gutterBottom sx={{ color: '#333' }}>
           {ceremonyData.name}
         </Typography>
 
         {isUserCreator && (
-          <div>
-            <Typography variant="h6" gutterBottom>
-              こちらのQRコードを読み取ると、本日のお経の一覧をみることができます。
+          <Box sx={{ textAlign: 'center', my: 4 }}>
+            <Typography variant="h6" gutterBottom sx={{ color: '#555' }}>
+              以下のQRコードをスキャンして、本日のお経の一覧をご覧ください。
             </Typography>
-            <QRCode value={`${url}/${id}/show`} />
-          </div>
+            <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+              <QRCode value={`${url}/${id}/show`} size={200} />
+            </Box>
+          </Box>
         )}
-        <Typography variant="body1" gutterBottom>
+        <Typography variant="body1" gutterBottom sx={{ color: '#666' }}>
           {ceremonyData.description}
         </Typography>
 
