@@ -5,7 +5,7 @@ class Api::V1::Current::CeremonyOkyoGroupController < Api::V1::BaseController
 
   # GET /api/v1/current/ceremonies/:ceremony_id/ceremony_okyo_groups
   def index
-    ceremony_okyo_groups = @ceremony.ceremony_okyo_groups
+    ceremony_okyo_groups = @ceremony.ceremony_okyo_groups.includes(:okyo)
     render json: ceremony_okyo_groups, status: :ok
   end
 
