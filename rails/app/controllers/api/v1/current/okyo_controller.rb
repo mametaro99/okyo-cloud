@@ -3,7 +3,7 @@ class Api::V1::Current::OkyoController < Api::V1::BaseController
   before_action :set_okyo, only: [:show, :destroy, :update]
 
   def index
-    @okyos = Okyo.all
+    @okyos = Okyo.includes(:sects).includes(:okyo_phrases) 
     render json: @okyos, each_serializer: OkyoSerializer, status: :ok
   end
 

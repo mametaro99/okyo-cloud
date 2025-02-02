@@ -1,6 +1,6 @@
 class OkyoPhrase < ApplicationRecord
   belongs_to :okyo
-  validation :phrase_text, presence: true
-  validation :meaning, presence: true
-  validation :reading, presence: true
+  validates :phrase_text, presence: true
+  validates :meaning, presence: true
+  validates :reading, presence: true
 end
