@@ -163,7 +163,7 @@ const OkyoDetail: NextPage = () => {
                 <ListItem key={phrase.id} divider>
                   <Box sx={{ width: '100%' }}>
                     <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                      {phrase.order}. {phrase.phraseText}
+                      {phrase.phraseText}
                     </Typography>
                     {phrase.reading && (
                       <Typography variant="body2" color="text.secondary">
