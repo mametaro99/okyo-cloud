@@ -1,7 +1,8 @@
 class Api::V1::OkyoController < ApplicationController
   def index
     @okyos = Okyo.includes(:sects).includes(:okyo_phrases)
-    render json: @okyos, each_serializer: OkyoSerializer, status: :ok
+    @published_okyos = @okyos.select { |okyo| okyo.published }
+    render json: @published_okyos, each_serializer: OkyoSerializer, status: :ok
   end
 
   def show
