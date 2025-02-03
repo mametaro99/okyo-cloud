@@ -104,6 +104,7 @@ GEM
     config (5.5.2)
       deep_merge (~> 1.2, >= 1.2.1)
       ostruct
+    connection_pool (2.5.0)
     crass (1.0.6)
     date (3.4.0)
     deep_merge (1.2.2)
@@ -130,6 +131,9 @@ GEM
       i18n (>= 1.8.11, < 2)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    hiredis (0.6.3)
+    hiredis-client (0.23.2)
+      redis-client (= 0.23.2)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     jmespath (1.6.2)
@@ -229,6 +233,10 @@ GEM
       zeitwerk (~> 2.5)
     rainbow (3.1.1)
     rake (13.2.1)
+    redis (5.3.0)
+      redis-client (>= 0.22.0)
+    redis-client (0.23.2)
+      connection_pool
     regexp_parser (2.9.2)
     responders (3.1.1)
       actionpack (>= 5.2)
@@ -300,6 +308,8 @@ DEPENDENCIES
   devise_token_auth
   factory_bot_rails
   faker
+  hiredis
+  hiredis-client
   letter_opener_web
   mysql2 (~> 0.5)
   pry-byebug
@@ -308,6 +318,7 @@ DEPENDENCIES
   puma (~> 5.0)
   rack-cors
   rails (~> 7.0.4)
+  redis
   rspec-rails
   rubocop-faker
   rubocop-rails

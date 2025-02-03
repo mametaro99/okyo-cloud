@@ -39,6 +39,11 @@ gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 # ActiveStorageを使えるようにする
 gem "aws-sdk-s3", require: false
 
+# redisを使えるようにする
+gem 'redis'
+gem 'hiredis'
+gem 'hiredis-client'
+
 group :development, :test do
   # テスト用データを作成する
   gem "factory_bot_rails"
