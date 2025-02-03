@@ -3,7 +3,7 @@ class Api::V1::Current::OkyoController < Api::V1::BaseController
   before_action :set_okyo, only: [:show, :destroy, :update]
 
   def index
-    @okyos = Okyo.includes(:sects).includes(:okyo_phrases) 
+    @okyos = cache_current_okyos
     render json: @okyos, each_serializer: OkyoSerializer, status: :ok
   end
 
@@ -17,7 +17,7 @@ class Api::V1::Current::OkyoController < Api::V1::BaseController
   end
 
   def show
-    render json: @okyo, serializer: OkyoSerializer ,status: :ok
+    render json: @okyo, serializer: ShowOkyoSerializer ,status: :ok
   end
 
   def update
@@ -46,5 +46,11 @@ class Api::V1::Current::OkyoController < Api::V1::BaseController
 
   def okyo_params
     params.require(:okyo).permit(:name, :description, :article_url, :published, :video, sect_ids: [])
+  end
+
+  def cache_current_okyos
+    Rails.cache.fetch("current_okyos", expires_in: 1.hour) do
+      Okyo.includes(:sects).to_a
+    end
   end
 end
