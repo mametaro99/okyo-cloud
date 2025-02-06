@@ -475,7 +475,7 @@ const OkyoForm: NextPage = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <Box>
                     <Typography variant="h6">{phrase.phraseText}</Typography>
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography variant="body2" color="textSecondary" maxWidth={500}>
                       {phrase.meaning}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
@@ -499,7 +499,6 @@ const OkyoForm: NextPage = () => {
                         width: 70,
                         boxShadow: 'none',
                         mr: 2,
-                        ml: 1,
                         mt: 1,
                       }}
                       color="primary"
