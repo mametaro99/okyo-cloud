@@ -134,8 +134,9 @@ OkyoSectGroup.create!([
   { okyo_id: okyos[0].id, sect_id: sects[1].id },
   { okyo_id: okyos[0].id, sect_id: sects[2].id },
   { okyo_id: okyos[1].id, sect_id: sects[1].id },
-  { okyo_id: okyos[1].id, sect_id: sects[2].id }
-
+  { okyo_id: okyos[1].id, sect_id: sects[2].id },
+  { okyo_id: okyos[2].id, sect_id: sects[0].id },
+  { okyo_id: okyos[2].id, sect_id: sects[2].id }
 ])
 
 puts "Seed data successfully loaded!"
