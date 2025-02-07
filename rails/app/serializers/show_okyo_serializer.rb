@@ -1,5 +1,5 @@
 class ShowOkyoSerializer < ActiveModel::Serializer
-  attributes :id, :name, :description, :article_url, :sects, :video, :created_at, :from_today
+  attributes :id, :name, :description, :article_url, :sects, :video, :created_at, :from_today, :published
   has_many :sects, serializer: SectSerializer
   has_many :okyo_phrases, serializer: OkyoPhraseSerializer do
     object.okyo_phrases.order(:order)

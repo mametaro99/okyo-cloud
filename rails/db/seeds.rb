@@ -15,7 +15,8 @@ users = User.create!([
 # お経データの作成
 okyos = Okyo.create!([
   { name: "般若心経", description: "智慧の完成を説いたお経", video_url: "pannyashingyou128.mp3", article_url: "https://www.kazoku24.com/column/article/column101/", published: true },
-  { name: "観音経", description: "観音菩薩の慈悲を説いたお経", video_url: "https://youtu.be/sample2", article_url: "https://blog.example.com/sample2", published: true }
+  { name: "三帰礼文", description: "華厳宗や曹洞宗で読まれるお経。三宝(仏陀・法・僧)を拝む文章。", video_url: "https://youtu.be/sample2", article_url: "https://bukyou.homodeusu.com/%E3%80%90%E7%9C%9F%E8%A8%80%E5%AE%97%E3%80%91%E4%B8%89%E5%B8%B0%E7%A4%BC%E6%96%87%E3%83%BB%E5%B8%B0%E7%A4%BC%E6%96%87%EF%BC%88%E3%81%95%E3%82%93%E3%81%8D%E3%82%89%E3%81%84%E3%82%82%E3%82%93%EF%BC%89/", published: true },
+  { name: "舎利礼文", description: "『舎利礼文』は、葬儀や枕経などに読誦されます。道元禅師の火葬の際にも読誦されたこともあり、曹洞宗で主に用いられています。その内容は釈迦を慕ってその遺骨を礼拝するお経で、釈迦の本質（法身）は永遠であり、人間界に現われて救いの道を教え、永遠の世界に帰られた。私達も仏の慈悲の力によって悟りの智恵を求める願いを起こし、修行して大智を完成するというものです。", video_url: "https://youtu.be/sample3", article_url: "https://www.houjuzan-manpukuji.com/syariraimon.html", published: true }
 ])
 
 
@@ -75,6 +76,46 @@ OkyoPhrase.create!([
 ])
 
 
+
+OkyoPhrase.create!([
+  { okyo_id: okyos[1].id, phrase_text: "自帰依仏", meaning: "私自ら仏様をよりどころとします。", reading: "じきえぶつ", video_start_time: 30, video_end_time: 37, order: 1 },
+  { okyo_id: okyos[1].id, phrase_text: "当願衆生", meaning: "当に願わくは衆生と共に", reading: "とうがんしゅじょう", video_start_time: 37, video_end_time: 46, order: 2 },
+  { okyo_id: okyos[1].id, phrase_text: "体解大道", meaning: "大道を体解して", reading: "たいげだいどう", video_start_time: 46, video_end_time: 50, order: 3 },
+  { okyo_id: okyos[1].id, phrase_text: "発無上意", meaning: "無上意を発さん", reading: "ほつむじょうい", video_start_time: 50, video_end_time: 54, order: 4 },
+  { okyo_id: okyos[1].id, phrase_text: "自帰依法", meaning: "自ら法に帰依し奉る", reading: "じきえほう", video_start_time: 54, video_end_time: 60, order: 5 },
+  { okyo_id: okyos[1].id, phrase_text: "当願衆生", meaning: "当に願わくは衆生と共に", reading: "とうがんしゅじょう", video_start_time: 61, video_end_time: 67, order: 6 },
+  { okyo_id: okyos[1].id, phrase_text: "深入経蔵", meaning: "深く経蔵に入って", reading: "じんにゅうきょうぞう", video_start_time: 67, video_end_time: 71, order: 7 },
+  { okyo_id: okyos[1].id, phrase_text: "智慧如海", meaning: "智慧海の如くならん", reading: "ちえにょかい", video_start_time: 71, video_end_time: 74, order: 8 },
+  { okyo_id: okyos[1].id, phrase_text: "自帰依僧", meaning: "自ら僧に帰依し奉る", reading: "じきえそう", video_start_time: 75, video_end_time: 84, order: 9 },
+  { okyo_id: okyos[1].id, phrase_text: "当願衆生", meaning: "当に願わくは衆生と共に", reading: "とうがんしゅじょう", video_start_time: 84, video_end_time: 90, order: 10 },
+  { okyo_id: okyos[1].id, phrase_text: "統理大衆", meaning: "大衆を統理して", reading: "とうりだいしゅう", video_start_time: 90, video_end_time: 96, order: 11 },
+  { okyo_id: okyos[1].id, phrase_text: "一切無礙", meaning: "一切無礙ならん", reading: "いっさいむげ", video_start_time: 96, video_end_time: 100, order: 12 }
+])
+
+
+
+OkyoPhrase.create!([
+  { okyo_id: okyos[2].id, phrase_text: "一心頂礼", meaning: "ひたすらに礼拝いたします。", reading: "いっしん・ちょうらい", video_start_time: 18, video_end_time: 21, order: 1 },
+  { okyo_id: okyos[2].id, phrase_text: "万徳円満", meaning: "多くの徳を十分に備えた", reading: "まんとく・えんまん", video_start_time: 21, video_end_time: 24, order: 2 },
+  { okyo_id: okyos[2].id, phrase_text: "釈迦如来", meaning: "お釈迦さま＝仏さまの", reading: "しゃか・にょらい", video_start_time: 24, video_end_time: 28, order: 3 },
+  { okyo_id: okyos[2].id, phrase_text: "真身舎利", meaning: "お体とお骨に対して、", reading: "しんじん・しゃり", video_start_time: 28, video_end_time: 31, order: 4 },
+  { okyo_id: okyos[2].id, phrase_text: "本地法身", meaning: "また、その尊い仏さまの", reading: "ほんじ・ほっしん", video_start_time: 31, video_end_time:34, order: 5 },
+  { okyo_id: okyos[2].id, phrase_text: "法界塔婆", meaning: "お骨を納めた供養塔に対して礼拝いたします。", reading: "ほっかい・とうば", video_start_time: 34, video_end_time: 37, order: 6 },
+  { okyo_id: okyos[2].id, phrase_text: "我等礼敬", meaning: "このように私たちが礼拝いたしますと、", reading: "がとう・らいきょう", video_start_time:37 , video_end_time: 40, order: 7 },
+  { okyo_id: okyos[2].id, phrase_text: "為我現身", meaning: "仏さまは私たちのために姿を現し、", reading: "いが・げんしん", video_start_time: 40, video_end_time: 43, order: 8 },
+  { okyo_id: okyos[2].id, phrase_text: "入我我入", meaning: "私たちの心に寄り添い、仏さまと私たちは一つになったように感じるのです。", reading: "にゅうが・がにゅう", video_start_time: 43, video_end_time: 46, order: 9 },
+  { okyo_id: okyos[2].id, phrase_text: "仏加持故", meaning: "こうして仏さまが守ってくれるように感じるからこそ、", reading: "ぶつが・じこ", video_start_time: 46, video_end_time: 48, order: 10 },
+  { okyo_id: okyos[2].id, phrase_text: "我證菩提", meaning: "私たちは大切なものを得ることができ、", reading: "がしょう・ぼだい", video_start_time: 48, video_end_time: 51, order: 11 },
+  { okyo_id: okyos[2].id, phrase_text: "以仏神力", meaning: "仏さまの見えない力によって、", reading: "いぶつ・じんりき", video_start_time:51, video_end_time: 54, order: 12 },
+  { okyo_id: okyos[2].id, phrase_text: "利益衆生", meaning: "私たちは救われるのです。", reading: "りやく・しゅじょう", video_start_time: 54, video_end_time:57, order: 13 },
+  { okyo_id: okyos[2].id, phrase_text: "発菩提心", meaning: "道を求めようと心を起こし、", reading: "ほつ・ぼだいしん", video_start_time: 50, video_end_time: 60, order: 14 },
+  { okyo_id: okyos[2].id, phrase_text: "修菩薩行", meaning: "道を求めて行動すれば、", reading: "しゅう・ぼさつぎょう", video_start_time: 60, video_end_time: 63, order: 15 },
+  { okyo_id: okyos[2].id, phrase_text: "同入円寂", meaning: "よりどころができて、みんな心やすらかとなることでしょう。", reading: "どうにゅう・えんじゃく", video_start_time: 63, video_end_time: 66, order: 16 },
+  { okyo_id: okyos[2].id, phrase_text: "平等大智", meaning: "このように、人々を平等に導く仏さまの智慧（ちえ）に対して、", reading: "びょうどう・だいち", video_start_time: 66, video_end_time: 69, order: 17 },
+  { okyo_id: okyos[2].id, phrase_text: "今将頂礼", meaning: "いま、まさに礼拝いたします。", reading: "こんしょう・ちょうらい", video_start_time: 69, video_end_time: 73, order: 18 }
+])
+
+
 # 式典・葬式データの作成
 ceremonies = Ceremony.create!([
   { name: "春季法要", event_date: Date.new(2024, 3, 21), user_id: users[0].id, location: "浄光寺", description: "春のお彼岸法要" },
@@ -91,7 +132,11 @@ CeremonyOkyoGroup.create!([
 OkyoSectGroup.create!([
   { okyo_id: okyos[0].id, sect_id: sects[0].id },
   { okyo_id: okyos[0].id, sect_id: sects[1].id },
-  { okyo_id: okyos[1].id, sect_id: sects[2].id }
+  { okyo_id: okyos[0].id, sect_id: sects[2].id },
+  { okyo_id: okyos[1].id, sect_id: sects[1].id },
+  { okyo_id: okyos[1].id, sect_id: sects[2].id },
+  { okyo_id: okyos[2].id, sect_id: sects[0].id },
+  { okyo_id: okyos[2].id, sect_id: sects[2].id }
 ])
 
 puts "Seed data successfully loaded!"
