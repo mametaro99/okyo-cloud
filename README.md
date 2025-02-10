@@ -31,3 +31,8 @@
 - [Active Storage の概要_Railsガイド](https://railsguides.jp/active_storage_overview.html)
 
 - [【Rails+Nuxt】RailsのActive Storage ダイレクトアップロード機能を Nuxt から使う_ラジコード](https://blog.radicode.co.jp/development/1492)
+
+## CloudFrontを経由した動画ファイルのアップロード
+
+[メモ：ActiveStorageで格納した画像をCloudfront配信する_shouta-dev](https://qiita.com/shouta-dev/items/0b9569bf5522cca4cf3c)
+[チュートリアル: Amazon S3、Amazon CloudFront、Amazon Route 53 を使用したオンデマンドストリーミング動画のホスティング。AWS](https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/tutorial-s3-cloudfront-route53-video-streaming.html)
