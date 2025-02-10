@@ -5,9 +5,12 @@ class ShowOkyoSerializer < ActiveModel::Serializer
     object.okyo_phrases.order(:order)
   end
   
-  # ActiveStorageでS3にアップロードされた動画の署名付きURLを返すメソッド
+  # ActiveStorageで該当する動画ファイルのCloudFrontの保存先パスを返す
   def video
-    object.video.attachment.service.send(:object_for, object.video.key).public_url if object.video.attached?
+    if object.video.attached?
+      key = object.video.blob.key
+      "#{Settings.cloudfront.url}#{key}"
+    end
   end
 
   def created_at
